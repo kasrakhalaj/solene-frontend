@@ -52,8 +52,8 @@ export default async function LocalePage(props: { params: Promise<{ locale: stri
       </section>
 
       {/* Trust Badges */}
-      <section className="py-8 px-4 lg:px-16 bg-white">
-        <TrustBadgeRow dict={dict} className="max-w-4xl mx-auto border-none" />
+      <section className="bg-brand-bg overflow-hidden">
+        <TrustBadgeRow dict={dict} className="border-none !my-0 py-8 lg:py-10" />
       </section>
 
       {/* Featured Collections */}

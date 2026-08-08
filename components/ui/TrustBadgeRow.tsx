@@ -1,7 +1,8 @@
 'use client'
 
-import { ShieldCheck, Droplets, Sparkles } from 'lucide-react'
+import { motion } from 'motion/react'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
+import { cn } from '@/lib/utils'
 
 interface TrustBadgeRowProps {
   dict: Dictionary
@@ -9,39 +10,35 @@ interface TrustBadgeRowProps {
 }
 
 export function TrustBadgeRow({ dict, className = '' }: TrustBadgeRowProps) {
-  const badges = [
-    {
-      id: 'hypoallergenic',
-      label: dict.product.hypoallergenic,
-      icon: ShieldCheck,
-    },
-    {
-      id: 'rustProof',
-      label: dict.product.rustProof,
-      icon: Droplets,
-    },
-    {
-      id: 'colorFast',
-      label: dict.product.colorFast,
-      icon: Sparkles,
-    },
+  const coreBadges = [
+    { id: 'hypoallergenic', label: dict.product.hypoallergenic },
+    { id: 'rustProof', label: dict.product.rustProof },
+    { id: 'colorFast', label: dict.product.colorFast },
   ]
 
+  // Create 12 copies to ensure it completely overflows the widest screens
+  // Translating -50% means it perfectly loops exactly half-way through.
+  const loopItems = Array(12).fill(coreBadges).flat()
+
   return (
-    <div className={`grid grid-cols-3 gap-2 py-4 border-y border-brand-border ${className}`}>
-      {badges.map((badge) => {
-        const Icon = badge.icon
-        return (
-          <div key={badge.id} className="flex flex-col items-center justify-center gap-2 text-center p-2">
-            <div className="w-10 h-10 rounded-full bg-brand-cream flex items-center justify-center text-brand-gold">
-              <Icon size={20} strokeWidth={1.5} />
-            </div>
-            <span className="text-[11px] font-medium text-brand-text leading-tight">
+    <div 
+      className={cn("overflow-hidden flex items-center py-6 select-none", className)}
+      dir="ltr"
+    >
+      <motion.div
+        className="flex items-center gap-12 shrink-0 pr-12"
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ repeat: Infinity, ease: "linear", duration: 40 }}
+      >
+        {loopItems.map((badge, idx) => (
+          <div key={`${badge.id}-${idx}`} className="flex items-center gap-12">
+            <span className="text-sm md:text-base font-semibold tracking-[0.2em] uppercase text-brand-text whitespace-nowrap">
               {badge.label}
             </span>
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-gold/60 shrink-0" />
           </div>
-        )
-      })}
+        ))}
+      </motion.div>
     </div>
   )
 }
