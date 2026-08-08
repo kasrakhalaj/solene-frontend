@@ -62,6 +62,8 @@ export function Navbar({ dict }: NavbarProps) {
     return segments.join('/')
   })()
 
+  const switchLocaleFont = locale === 'fa' ? 'font-inter' : 'font-vazirmatn'
+
 
 
   // ── Lock body scroll when mobile menu open ──
@@ -103,7 +105,7 @@ export function Navbar({ dict }: NavbarProps) {
             </button>
 
             {/* Desktop nav links */}
-            <div className="hidden lg:flex items-center gap-1">
+            <div className="hidden lg:flex items-center gap-2">
               {NAV_CATEGORIES.map((cat) => (
                 <Link
                   key={cat}
@@ -135,7 +137,7 @@ export function Navbar({ dict }: NavbarProps) {
           {/* ─── Center: Brand logo ─── */}
           <Link
             href={`/${locale}`}
-            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center leading-none select-none"
+            className="absolute inset-x-0 mx-auto w-fit flex flex-col items-center leading-none select-none"
           >
             <span className="text-xl sm:text-2xl font-bold tracking-wider text-brand-text">
               {siteConfig.brandLatin}
@@ -150,7 +152,10 @@ export function Navbar({ dict }: NavbarProps) {
             {/* Language switcher (desktop) */}
             <Link
               href={switchLocalePath}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-full text-sm text-brand-muted hover:text-brand-text hover:bg-brand-cream/60 transition-colors"
+              className={cn(
+                "hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-full text-sm text-brand-muted hover:text-brand-text hover:bg-brand-cream/60 transition-colors",
+                switchLocaleFont
+              )}
             >
               <Globe size={16} />
               <span>{dict.common.languageSwitcher}</span>
@@ -191,7 +196,7 @@ export function Navbar({ dict }: NavbarProps) {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
-                    className="absolute -top-0.5 -end-0.5 min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-brand-gold text-white text-[11px] font-bold leading-none"
+                    className="absolute top-1.5 end-1.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-brand-gold text-white text-[10px] font-bold leading-none"
                   >
                     {count}
                   </motion.span>
@@ -239,13 +244,28 @@ export function Navbar({ dict }: NavbarProps) {
                 >
                   {dict.nav.about}
                 </Link>
+                <Link
+                  href={`/${locale}/wishlist`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    'block px-4 py-3 rounded-xl text-base font-medium transition-colors',
+                    pathname.includes('/wishlist')
+                      ? 'bg-brand-cream text-brand-text'
+                      : 'text-brand-muted hover:bg-brand-cream/60',
+                  )}
+                >
+                  {dict.nav.wishlist}
+                </Link>
 
                 {/* Language switcher (mobile) */}
                 <div className="pt-2 border-t border-brand-border mt-2">
                   <Link
                     href={switchLocalePath}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2 px-4 py-3 rounded-xl text-base font-medium text-brand-muted hover:bg-brand-cream/60 transition-colors"
+                    className={cn(
+                      "flex items-center gap-2 px-4 py-3 rounded-xl text-base font-medium text-brand-muted hover:bg-brand-cream/60 transition-colors",
+                      switchLocaleFont
+                    )}
                   >
                     <Globe size={18} />
                     {dict.common.languageSwitcher}
