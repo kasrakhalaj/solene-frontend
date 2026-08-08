@@ -16,10 +16,17 @@ interface ProvidersProps {
  * Deliberately thin: Server Components read locale via next/root-params;
  * only client components need this context.
  */
-export function Providers({ children, locale }: ProvidersProps) {
+import { WishlistProvider } from '@/components/providers/WishlistProvider'
+import { ToastProvider } from '@/components/providers/ToastProvider'
+import type { Dictionary } from './dictionaries'
+
+export function Providers({ children, locale, dict }: ProvidersProps & { dict: Dictionary }) {
   return (
     <LocaleProvider locale={locale}>
-      {children}
+      <WishlistProvider dict={dict}>
+        {children}
+        <ToastProvider />
+      </WishlistProvider>
     </LocaleProvider>
   )
 }

@@ -65,8 +65,8 @@ export const useAuthStore = create<AuthState>()(
         if (token) {
           try {
             await authService.logout(token)
-          } catch (e) {
-            // Ignore logout errors
+          } catch {
+            // If local storage is broken or empty, proceed with empty userrors
           }
         }
         set({ user: null, token: null, isAuthenticated: false })

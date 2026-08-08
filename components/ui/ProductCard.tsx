@@ -6,28 +6,34 @@ import Link from 'next/link'
 import { Heart, ShoppingBag, Check } from 'lucide-react'
 import { cn, formatPrice } from '@/lib/utils'
 import { Product } from '@/lib/mockData'
-import { useStore } from '@/lib/cartStore'
+import { useStore as useCartStore } from '@/lib/cartStore'
+import { useWishlistAction } from '@/components/providers/WishlistProvider'
 import { useLocale } from '@/app/[locale]/providers'
+import { useToastStore } from '@/lib/toastStore'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
 import { motion, AnimatePresence } from 'motion/react'
 
 interface ProductCardProps {
   product: Product
   dict: Dictionary
+  priority?: boolean
 }
 
-export function ProductCard({ product, dict }: ProductCardProps) {
+export function ProductCard({ product, dict, priority = false }: ProductCardProps) {
   const locale = useLocale()
   const isRtl = locale === 'fa'
   const title = isRtl ? product.title_fa : product.title_en
   
   const [isHovered, setIsHovered] = useState(false)
+  const [isImageLoaded, setIsImageLoaded] = useState(false)
   
-  const wishlist = useStore((s) => s.wishlist)
-  const toggleWishlist = useStore((s) => s.toggleWishlist)
+  const wishlist = useCartStore((s) => s.wishlist)
+  const handleWishlistAction = useWishlistAction()
   const isWishlisted = wishlist.includes(product.id)
   
-  const addToCart = useStore((s) => s.addToCart)
+  const addToCart = useCartStore((s) => s.addToCart)
+  const openCart = useCartStore((s) => s.openCart)
+  const addToast = useToastStore((s) => s.addToast)
   const [isAdded, setIsAdded] = useState(false)
 
   const handleQuickAdd = (e: React.MouseEvent) => {
@@ -40,12 +46,22 @@ export function ProductCard({ product, dict }: ProductCardProps) {
     addToCart(product, size, 1)
     
     setIsAdded(true)
+    
+    addToast({
+      title: dict.toast?.addedToCart || (isRtl ? 'به سبد خرید اضافه شد' : 'Added to cart'),
+      description: title,
+      action: {
+        label: dict.toast?.viewCart || (isRtl ? 'مشاهده سبد' : 'View Cart'),
+        onClick: openCart
+      }
+    })
+    
     setTimeout(() => setIsAdded(false), 2000)
   }
 
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault()
-    toggleWishlist(product.id)
+    handleWishlistAction(product.id)
   }
 
   return (
@@ -93,27 +109,30 @@ export function ProductCard({ product, dict }: ProductCardProps) {
           src={product.images[0]}
           alt={title}
           fill
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className={cn(
-            "object-cover transition-opacity duration-500",
-            isHovered && product.images.length > 1 ? "opacity-0" : "opacity-100"
+            "object-cover transition-all duration-700 ease-out",
+            isHovered && product.images[1] ? "opacity-0 scale-105" : "opacity-100 scale-100",
+            !isImageLoaded && "opacity-0"
           )}
+          priority={priority}
+          onLoad={() => setIsImageLoaded(true)}
         />
-        
-        {/* Secondary Image (Hover) */}
-        {product.images.length > 1 && (
+        {product.images[1] && (
           <Image
             src={product.images[1]}
-            alt={title}
+            alt={`${title} alternate view`}
             fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className={cn(
-              "object-cover transition-all duration-700",
-              isHovered ? "opacity-100 scale-105" : "opacity-0 scale-100"
+              "object-cover transition-all duration-700 ease-out",
+              isHovered ? "opacity-100 scale-100" : "opacity-0 scale-105",
+              !isImageLoaded && "opacity-0"
             )}
+            priority={priority}
           />
         )}
-
+        
         {/* Quick Add overlay */}
         <div className={cn(
           "absolute bottom-0 inset-x-0 p-3 transition-transform duration-300",

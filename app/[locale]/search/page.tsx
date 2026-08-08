@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getDictionary } from '@/app/[locale]/dictionaries'
 import { searchService } from '@/lib/searchService'
 import { ProductCard } from '@/components/ui/ProductCard'

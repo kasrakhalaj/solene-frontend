@@ -4,11 +4,11 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
 import { useAuthStore } from '@/lib/authStore'
+import { useStore as useCartStore } from '@/lib/cartStore'
 import { useLocale } from '@/app/[locale]/providers'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
 import { AlertCircle, ArrowRight, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
 
 interface LoginClientProps {
   dict: Dictionary
@@ -21,9 +21,12 @@ export function LoginClient({ dict }: LoginClientProps) {
   const locale = useLocale()
   const searchParams = useSearchParams()
   const redirectUrl = searchParams.get('redirect')
+  const wishlistAdd = searchParams.get('wishlist_add')
   const isFromCheckout = redirectUrl?.includes('checkout')
 
   const { loginWithPhone, verifyOtp, loginWithEmail, signupWithEmail, isAuthenticated } = useAuthStore()
+  const toggleWishlist = useCartStore((s) => s.toggleWishlist)
+  const wishlist = useCartStore((s) => s.wishlist)
 
   const [mode, setMode] = useState<AuthMode>('phone')
   const [isLoading, setIsLoading] = useState(false)
@@ -43,10 +46,13 @@ export function LoginClient({ dict }: LoginClientProps) {
 
   useEffect(() => {
     if (isAuthenticated) {
+      if (wishlistAdd && !wishlist.includes(wishlistAdd)) {
+        toggleWishlist(wishlistAdd)
+      }
       if (redirectUrl) router.push(redirectUrl)
       else router.push(`/${locale}/account`)
     }
-  }, [isAuthenticated, router, locale, redirectUrl])
+  }, [isAuthenticated, router, locale, redirectUrl, wishlistAdd, toggleWishlist, wishlist])
 
   const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -55,7 +61,7 @@ export function LoginClient({ dict }: LoginClientProps) {
     try {
       await loginWithPhone(phone)
       setMode('otp')
-    } catch (err: unknown) {
+    } catch {
       setError(dict.auth.errors.invalidPhone || dict.auth.errors.general)
     } finally {
       setIsLoading(false)
@@ -101,7 +107,7 @@ export function LoginClient({ dict }: LoginClientProps) {
     try {
       await verifyOtp(phone, code)
       // Effect will redirect
-    } catch (err: unknown) {
+    } catch {
       setError(dict.auth.errors.invalidOtp || dict.auth.errors.general)
     } finally {
       setIsLoading(false)

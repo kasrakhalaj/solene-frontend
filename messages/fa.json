@@ -7,6 +7,12 @@
     "languageSwitcher": "English",
     "loading": "در حال بارگذاری..."
   },
+  "wishlistModal": {
+    "title": "علاقه‌مندی‌های خود را ذخیره کنید",
+    "description": "برای ذخیره قطعات مورد علاقه در حساب کاربری خود، وارد شوید.",
+    "login": "ورود به حساب",
+    "notNow": "فعلا نه"
+  },
   "search": {
     "placeholder": "جستجو محصولات...",
     "clear": "پاک کردن",
@@ -99,6 +105,12 @@
     "empty": "لیست علاقه‌مندی‌های شما خالی است",
     "emptyDescription": "محصولات مورد علاقه خود را برای بعد ذخیره کنید",
     "continueShopping": "مشاهده محصولات"
+  },
+  "toast": {
+    "addedToCart": "به سبد خرید اضافه شد",
+    "viewCart": "مشاهده سبد",
+    "addedToWishlist": "به علاقه‌مندی‌ها اضافه شد",
+    "removedFromWishlist": "از علاقه‌مندی‌ها حذف شد"
   },
   "checkout": {
     "title": "تکمیل خرید",

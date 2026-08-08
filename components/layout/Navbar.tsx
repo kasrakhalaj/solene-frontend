@@ -60,6 +60,7 @@ export function Navbar({ dict }: NavbarProps) {
 
   // Track scroll for background transition
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
     const handler = () => setIsScrolled(window.scrollY > 10)
     window.addEventListener('scroll', handler, { passive: true })
@@ -192,7 +193,7 @@ export function Navbar({ dict }: NavbarProps) {
               </div>
             ) : (
               <Link
-                href={`/${locale}/account`}
+                href={isAuthenticated ? `/${locale}/account` : `/${locale}/login`}
                 className="hidden sm:flex items-center justify-center w-11 h-11 rounded-full hover:bg-brand-cream transition-colors text-brand-muted hover:text-brand-text relative"
                 aria-label={dict.nav.login || 'Account'}
               >
@@ -278,6 +279,18 @@ export function Navbar({ dict }: NavbarProps) {
                   {dict.nav.about}
                 </Link>
                 <Link
+                  href={isAuthenticated ? `/${locale}/account` : `/${locale}/login`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-4 rounded-xl bg-brand-cream/50"
+                >
+                  <div className="flex items-center gap-3">
+                    <User size={20} className="text-brand-muted" />
+                    <span className="font-medium text-brand-text">
+                      {isAuthenticated ? dict.account.title : dict.nav.login}
+                    </span>
+                  </div>
+                </Link>
+                <Link
                   href={`/${locale}/wishlist`}
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
@@ -289,19 +302,7 @@ export function Navbar({ dict }: NavbarProps) {
                 >
                   {dict.nav.wishlist}
                 </Link>
-                <Link
-                  href={`/${locale}/account`}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-colors',
-                    pathname.includes('/account') || pathname.includes('/login')
-                      ? 'bg-brand-cream text-brand-text'
-                      : 'text-brand-muted hover:bg-brand-cream/60',
-                  )}
-                >
-                  <User size={18} />
-                  <span>{dict.account?.title || dict.nav.login || 'Account'}</span>
-                </Link>
+
 
                 {/* Language switcher (mobile) */}
                 <div className="pt-2 border-t border-brand-border mt-2">

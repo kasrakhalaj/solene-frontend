@@ -7,6 +7,12 @@
     "languageSwitcher": "فارسی",
     "loading": "Loading..."
   },
+  "wishlistModal": {
+    "title": "Save your favorites",
+    "description": "Log in to keep your favorite pieces saved to your account.",
+    "login": "Log in",
+    "notNow": "Not now"
+  },
   "search": {
     "placeholder": "Search products...",
     "clear": "Clear search",
@@ -20,6 +26,12 @@
     },
     "resultsTitle": "Search results for \"{query}\"",
     "resultsCount": "{count} products found"
+  },
+  "toast": {
+    "addedToCart": "Added to cart",
+    "viewCart": "View cart",
+    "addedToWishlist": "Added to wishlist",
+    "removedFromWishlist": "Removed from wishlist"
   },
   "nav": {
     "home": "Home",

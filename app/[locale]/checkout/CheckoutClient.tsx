@@ -38,8 +38,8 @@ export function CheckoutClient({ dict }: CheckoutClientProps) {
   const [city, setCity] = useState('')
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPhone(prev => prev || user.phone || '')
       setEmail(prev => prev || user.email || '')
       if (user.displayName) {
@@ -103,31 +103,41 @@ export function CheckoutClient({ dict }: CheckoutClientProps) {
       <div className="flex-1 space-y-12">
         {/* Shipping Form */}
         <section>
-          <h2 className="text-xl font-semibold text-brand-text mb-6">{dict.checkout.shipping}</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-brand-text">{dict.checkout.shipping}</h2>
+            {!user && (
+              <Link 
+                href={`/${locale}/login?redirect=/${locale}/checkout`} 
+                className="text-sm text-brand-muted hover:text-brand-text transition-colors underline underline-offset-4"
+              >
+                {dict.auth.loginTitle}
+              </Link>
+            )}
+          </div>
           <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
               <label htmlFor="firstName" className="text-sm font-medium text-brand-text">{dict.checkout.firstName}</label>
-              <input id="firstName" type="text" className="px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all" required />
+              <input id="firstName" type="text" value={firstName} onChange={e => setFirstName(e.target.value)} className="px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all" required />
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="lastName" className="text-sm font-medium text-brand-text">{dict.checkout.lastName}</label>
-              <input id="lastName" type="text" className="px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all" required />
+              <input id="lastName" type="text" value={lastName} onChange={e => setLastName(e.target.value)} className="px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all" required />
             </div>
             <div className="flex flex-col gap-1 md:col-span-2">
               <label htmlFor="phone" className="text-sm font-medium text-brand-text">{dict.checkout.phone}</label>
-              <input id="phone" type="tel" className="px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all text-left" dir="ltr" required />
+              <input id="phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} className="px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all text-left" dir="ltr" required />
             </div>
             <div className="flex flex-col gap-1 md:col-span-2">
               <label htmlFor="address" className="text-sm font-medium text-brand-text">{dict.checkout.address}</label>
-              <input id="address" type="text" className="px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all" required />
+              <input id="address" type="text" value={address} onChange={e => setAddress(e.target.value)} className="px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all" required />
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="province" className="text-sm font-medium text-brand-text">{dict.checkout.province}</label>
-              <input id="province" type="text" className="px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all" required />
+              <input id="province" type="text" value={province} onChange={e => setProvince(e.target.value)} className="px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all" required />
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="city" className="text-sm font-medium text-brand-text">{dict.checkout.city}</label>
-              <input id="city" type="text" className="px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all" required />
+              <input id="city" type="text" value={city} onChange={e => setCity(e.target.value)} className="px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all" required />
             </div>
           </form>
         </section>

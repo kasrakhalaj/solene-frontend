@@ -12,6 +12,7 @@ interface ZoomableGalleryProps {
 
 export function ZoomableGallery({ images, title }: ZoomableGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
   
   // Zoom state
   const [isZoomed, setIsZoomed] = useState(false)
@@ -58,13 +59,15 @@ export function ZoomableGallery({ images, title }: ZoomableGalleryProps) {
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className={cn(
-                "object-cover transition-transform duration-200 ease-out",
-                isZoomed ? "scale-[2]" : "scale-100"
+                "object-cover transition-all duration-500 ease-out",
+                isZoomed ? "scale-[2]" : "scale-100",
+                !loadedImages.has(activeIndex) && "opacity-0"
               )}
               style={{
                 transformOrigin: isZoomed ? `${zoomPos.x}% ${zoomPos.y}%` : 'center center'
               }}
               priority
+              onLoad={() => setLoadedImages(prev => new Set(prev).add(activeIndex))}
             />
           </motion.div>
         </AnimatePresence>
@@ -89,7 +92,11 @@ export function ZoomableGallery({ images, title }: ZoomableGalleryProps) {
                 alt={`Thumbnail ${idx + 1}`}
                 fill
                 sizes="(max-width: 768px) 25vw, 12vw"
-                className="object-cover"
+                className={cn(
+                  "object-cover transition-opacity duration-500",
+                  !loadedImages.has(idx + 100) && "opacity-0"
+                )}
+                onLoad={() => setLoadedImages(prev => new Set(prev).add(idx + 100))}
               />
             </button>
           ))}

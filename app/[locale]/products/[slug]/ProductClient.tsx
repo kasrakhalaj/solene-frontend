@@ -1,16 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import Image from 'next/image'
 import { Product, getProductsByCategory } from '@/lib/mockData'
 import { ZoomableGallery } from '@/components/ui/ZoomableGallery'
 import { TrustBadgeRow } from '@/components/ui/TrustBadgeRow'
 import { SizeGuideModal } from '@/components/ui/SizeGuideModal'
 import { ProductCard } from '@/components/ui/ProductCard'
-import { useStore } from '@/lib/cartStore'
+import { useStore as useCartStore } from '@/lib/cartStore'
+import { useWishlistAction } from '@/components/providers/WishlistProvider'
+import { useToastStore } from '@/lib/toastStore'
 import { formatPrice, cn } from '@/lib/utils'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
 import { Heart, Minus, Plus, ShoppingBag, Check } from 'lucide-react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence, useInView } from 'motion/react'
 import { useLocale } from '@/app/[locale]/providers'
 
 interface ProductClientProps {
@@ -29,10 +32,14 @@ export function ProductClient({ product, dict }: ProductClientProps) {
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false)
   
   const [isAdded, setIsAdded] = useState(false)
-  const addToCart = useStore(s => s.addToCart)
-  const toggleWishlist = useStore(s => s.toggleWishlist)
-  const isWishlisted = useStore(s => s.wishlist.includes(product.id))
-  const openCart = useStore(s => s.openCart)
+  const addToCartRef = useRef<HTMLButtonElement>(null)
+  const isAddToCartInView = useInView(addToCartRef)
+  
+  const addToCart = useCartStore(s => s.addToCart)
+  const handleWishlistAction = useWishlistAction()
+  const isWishlisted = useCartStore(s => s.wishlist.includes(product.id))
+  const openCart = useCartStore(s => s.openCart)
+  const addToast = useToastStore(s => s.addToast)
 
   const handleAddToCart = () => {
     if (!product.inStock) return
@@ -40,9 +47,18 @@ export function ProductClient({ product, dict }: ProductClientProps) {
     
     addToCart(product, selectedSize, quantity)
     setIsAdded(true)
+    
+    addToast({
+      title: dict.toast?.addedToCart || (isRtl ? 'به سبد خرید اضافه شد' : 'Added to cart'),
+      description: title,
+      action: {
+        label: dict.toast?.viewCart || (isRtl ? 'مشاهده سبد' : 'View Cart'),
+        onClick: openCart
+      }
+    })
+
     setTimeout(() => {
       setIsAdded(false)
-      openCart()
     }, 1500)
   }
 
@@ -147,6 +163,7 @@ export function ProductClient({ product, dict }: ProductClientProps) {
             </div>
 
             <button
+              ref={addToCartRef}
               onClick={handleAddToCart}
               disabled={!product.inStock || (product.sizes.length > 0 && !selectedSize)}
               className="flex-1 h-14 rounded-full bg-brand-text text-brand-surface font-medium flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
@@ -179,7 +196,7 @@ export function ProductClient({ product, dict }: ProductClientProps) {
             </button>
 
             <button
-              onClick={() => toggleWishlist(product.id)}
+              onClick={() => handleWishlistAction(product.id)}
               className="w-14 h-14 rounded-full border border-brand-border flex items-center justify-center text-brand-text hover:bg-brand-cream transition-colors"
             >
               <Heart size={20} className={cn("transition-colors", isWishlisted && "fill-brand-gold text-brand-gold")} />
@@ -203,6 +220,43 @@ export function ProductClient({ product, dict }: ProductClientProps) {
       )}
 
       <SizeGuideModal isOpen={isSizeGuideOpen} onClose={() => setIsSizeGuideOpen(false)} dict={dict} />
+
+      {/* Sticky Mobile Add To Cart */}
+      <AnimatePresence>
+        {!isAddToCartInView && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="fixed bottom-0 left-0 right-0 z-[60] bg-brand-surface border-t border-brand-border p-4 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] lg:hidden pb-[calc(1rem+env(safe-area-inset-bottom))]"
+          >
+            <div className="flex items-center gap-4 max-w-lg mx-auto">
+              <div className="relative w-12 h-12 rounded-md overflow-hidden bg-brand-cream shrink-0">
+                <Image src={product.images[0]} alt={title} fill className="object-cover" sizes="48px" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-medium text-brand-text truncate">{title}</h3>
+                <p className="text-sm font-semibold text-brand-muted">
+                  {formatPrice(product.price, locale)}
+                  {selectedSize && <span className="mx-2 opacity-50">|</span>}
+                  {selectedSize && <span>{selectedSize}</span>}
+                </p>
+              </div>
+              <button
+                onClick={handleAddToCart}
+                disabled={!product.inStock || (product.sizes.length > 0 && !selectedSize)}
+                className="h-11 px-6 rounded-full bg-brand-text text-brand-surface text-sm font-medium shrink-0 disabled:opacity-50 disabled:cursor-not-allowed min-w-[100px] flex items-center justify-center"
+              >
+                {isAdded ? (
+                  <Check size={18} className="text-brand-gold" />
+                ) : (
+                  dict.product.addToCart
+                )}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

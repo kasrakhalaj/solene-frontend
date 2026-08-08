@@ -17,6 +17,7 @@ export function AccountClient({ dict }: AccountClientProps) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
   }, [])
 
@@ -35,7 +36,7 @@ export function AccountClient({ dict }: AccountClientProps) {
           {dict.auth.loginDescription}
         </p>
         <Link
-          href={`/${locale}/login`}
+          href={`/${locale}/login?redirect=/${locale}/account`}
           className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-brand-text text-brand-surface font-medium hover:opacity-90 transition-opacity"
         >
           {dict.nav.login || dict.auth.loginTitle}

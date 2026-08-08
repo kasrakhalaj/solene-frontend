@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
@@ -121,6 +122,7 @@ export function SearchDrawer({ dict, isOpen, onClose }: SearchDrawerProps) {
 
   // Reset active index when query changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActiveIndex(-1)
   }, [query])
 

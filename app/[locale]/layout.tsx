@@ -79,7 +79,7 @@ export default async function LocaleLayout({
           isFa ? 'font-vazirmatn' : 'font-inter',
         ].join(' ')}
       >
-        <Providers locale={l}>
+        <Providers locale={l} dict={dict}>
           <Navbar dict={dict} />
           <main className="flex-1">{children}</main>
           <Footer dict={dict} />

@@ -79,7 +79,7 @@ class MockAuthServiceImpl implements AuthService {
     const token = `tok_${Date.now()}_${Math.random().toString(36).substring(7)}`
     MOCK_DB.sessions.add(token)
 
-    const { password, ...safeUser } = user
+    const { password: _, ...safeUser } = user
     return { token, user: safeUser }
   }
 
