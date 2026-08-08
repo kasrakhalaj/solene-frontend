@@ -122,7 +122,6 @@ export function Footer({ dict }: FooterProps) {
             <li>
               <a 
                 href={`https://wa.me/${siteConfig.whatsapp.replace('+', '')}`}
-                dir="ltr"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-brand-muted hover:text-brand-gold transition-colors"
@@ -169,7 +168,7 @@ export function Footer({ dict }: FooterProps) {
                 type="submit"
                 disabled={status === 'loading' || status === 'success'}
                 aria-label={dict.footer.newsletterSubmit}
-                className={`absolute top-1/2 -translate-y-1/2 ${isRtl ? 'left-2' : 'right-2'} w-10 h-10 rounded-full bg-brand-gold text-white flex items-center justify-center hover:bg-brand-gold/90 transition-colors disabled:opacity-50`}
+                className="absolute top-1/2 -translate-y-1/2 end-2 w-10 h-10 rounded-full bg-brand-gold text-white flex items-center justify-center hover:bg-brand-gold/90 transition-colors disabled:opacity-50"
               >
                 {status === 'loading' ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

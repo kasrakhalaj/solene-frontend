@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useStore } from '@/lib/cartStore'
@@ -25,6 +25,8 @@ export function CheckoutClient({ dict }: CheckoutClientProps) {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card')
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentResult, setPaymentResult] = useState<'success' | 'failed' | null>(null)
+  const [receiptFile, setReceiptFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Calculate totals
   const subtotal = useMemo(() => {
@@ -133,8 +135,22 @@ export function CheckoutClient({ dict }: CheckoutClientProps) {
                       <div className="p-3 bg-brand-cream rounded-xl text-center font-mono tracking-wider text-lg text-brand-text" dir="ltr">
                         6037 - 9911 - 2233 - 4455
                       </div>
-                      <button className="w-full py-3 border border-brand-gold text-brand-gold rounded-xl font-medium hover:bg-brand-gold hover:text-white transition-colors">
-                        {dict.checkout.uploadReceipt}
+                      <input 
+                        type="file" 
+                        ref={fileInputRef} 
+                        className="hidden" 
+                        accept="image/*,.pdf"
+                        onChange={(e) => setReceiptFile(e.target.files?.[0] || null)}
+                      />
+                      <button 
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          fileInputRef.current?.click()
+                        }}
+                        className="flex items-center justify-center gap-2 w-full py-3 border border-brand-gold text-brand-gold rounded-xl font-medium hover:bg-brand-gold hover:text-white transition-colors truncate px-4"
+                      >
+                        <span className="truncate">{receiptFile ? receiptFile.name : dict.checkout.uploadReceipt}</span>
                       </button>
                     </div>
                   </motion.div>
@@ -237,7 +253,7 @@ export function CheckoutClient({ dict }: CheckoutClientProps) {
         <div className="sticky top-24 bg-brand-cream/30 p-6 rounded-3xl border border-brand-border">
           <h2 className="text-xl font-semibold text-brand-text mb-6">{dict.checkout.orderSummary}</h2>
           
-          <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2">
+          <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pe-2">
             {items.map((item, idx) => (
               <div key={idx} className="flex items-center gap-4">
                 <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-brand-cream shrink-0">
