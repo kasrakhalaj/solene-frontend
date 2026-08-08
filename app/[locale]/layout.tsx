@@ -5,6 +5,7 @@ import { locale as getLocale } from 'next/root-params'
 import { hasLocale, getDictionary } from './dictionaries'
 import { siteConfig } from '../../lib/siteConfig'
 import { Providers } from './providers'
+import { Navbar } from '@/components/layout/Navbar'
 import '../globals.css'
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────
@@ -62,6 +63,7 @@ export default async function LocaleLayout({
 
   const isFa = l === 'fa'
   const dir = isFa ? 'rtl' : 'ltr'
+  const dict = await getDictionary()
 
   return (
     <html
@@ -76,7 +78,10 @@ export default async function LocaleLayout({
           isFa ? 'font-vazirmatn' : 'font-inter',
         ].join(' ')}
       >
-        <Providers locale={l}>{children}</Providers>
+        <Providers locale={l}>
+          <Navbar dict={dict} />
+          <main className="flex-1">{children}</main>
+        </Providers>
       </body>
     </html>
   )

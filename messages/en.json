@@ -18,7 +18,11 @@
     "search": "Search",
     "cart": "Cart",
     "wishlist": "Wishlist",
-    "searchPlaceholder": "Search products..."
+    "searchPlaceholder": "Search products...",
+    "close": "Close",
+    "menu": "Menu",
+    "noResults": "No results found",
+    "viewAll": "View All"
   },
   "announcement": {
     "text": "Free shipping on orders over 1,000,000 Toman | Hypoallergenic & Rust-Proof Steel Accessories"
