@@ -79,6 +79,12 @@
     "freeShippingProgress": "{amount} Toman away from free shipping",
     "freeShippingReached": "🎉 You've unlocked free shipping!"
   },
+  "wishlistPage": {
+    "title": "Your Wishlist",
+    "empty": "Your wishlist is empty",
+    "emptyDescription": "Save your favorite pieces for later",
+    "continueShopping": "Browse Products"
+  },
   "checkout": {
     "title": "Checkout",
     "shipping": "Shipping Information",

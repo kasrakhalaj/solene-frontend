@@ -79,6 +79,12 @@
     "freeShippingProgress": "تا ارسال رایگان {amount} تومان مانده",
     "freeShippingReached": "🎉 ارسال رایگان برای شما فعال شد!"
   },
+  "wishlistPage": {
+    "title": "علاقه‌مندی‌های شما",
+    "empty": "لیست علاقه‌مندی‌های شما خالی است",
+    "emptyDescription": "محصولات مورد علاقه خود را برای بعد ذخیره کنید",
+    "continueShopping": "مشاهده محصولات"
+  },
   "checkout": {
     "title": "تکمیل خرید",
     "shipping": "اطلاعات ارسال",

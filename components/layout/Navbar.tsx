@@ -167,7 +167,7 @@ export function Navbar({ dict }: NavbarProps) {
 
             {/* Wishlist */}
             <Link
-              href={`/${locale}`}
+              href={`/${locale}/wishlist`}
               className="hidden sm:flex items-center justify-center w-11 h-11 rounded-full hover:bg-brand-cream transition-colors text-brand-muted hover:text-brand-text relative"
               aria-label={dict.nav.wishlist}
             >
