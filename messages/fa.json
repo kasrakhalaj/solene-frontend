@@ -1,0 +1,119 @@
+{
+  "common": {
+    "brand": "سولن",
+    "brandLatin": "Solene",
+    "tagline": "بدلیجات و اکسسوری استیل",
+    "taglineLong": "جواهرات استیل ضدحساسیت — بادوام، زیبا، برای هر روز",
+    "languageSwitcher": "English",
+    "loading": "در حال بارگذاری..."
+  },
+  "nav": {
+    "home": "خانه",
+    "collections": "مجموعه‌ها",
+    "rings": "انگشتر",
+    "necklaces": "گردنبند",
+    "earrings": "گوشواره",
+    "bracelets": "دستبند",
+    "about": "درباره ما",
+    "search": "جستجو",
+    "cart": "سبد خرید",
+    "wishlist": "علاقه‌مندی‌ها",
+    "searchPlaceholder": "جستجو در محصولات..."
+  },
+  "announcement": {
+    "text": "ارسال رایگان برای سفارشات بالای ۱ میلیون تومان | بدلیجات استیل ضدحساسیت و ضدزنگ"
+  },
+  "product": {
+    "addToCart": "افزودن به سبد",
+    "addedToCart": "اضافه شد",
+    "outOfStock": "ناموجود",
+    "new": "جدید",
+    "bestSeller": "پرفروش",
+    "viewDetails": "مشاهده جزئیات",
+    "quickAdd": "افزودن سریع",
+    "selectSize": "انتخاب سایز",
+    "sizeGuide": "راهنمای سایز",
+    "hypoallergenic": "ضدحساسیت",
+    "rustProof": "ضدزنگ",
+    "colorFast": "رنگ ثابت",
+    "freeShipping": "ارسال ایمن",
+    "returnWindow": "۷ روز مرجوعی",
+    "finish": "جنس و پوشش",
+    "silverSteel": "استیل نقره‌ای",
+    "goldSteel": "استیل طلایی",
+    "details": "مشخصات",
+    "care": "نگهداری",
+    "shipping": "ارسال و مرجوعی",
+    "relatedProducts": "محصولات مشابه",
+    "toman": "تومان",
+    "originalPrice": "قیمت اصلی"
+  },
+  "cart": {
+    "title": "سبد خرید",
+    "empty": "سبد خرید شما خالی است",
+    "emptyDescription": "محصولات دلخواه خود را انتخاب کنید",
+    "continueShopping": "ادامه خرید",
+    "subtotal": "جمع کل",
+    "checkout": "تکمیل خرید",
+    "remove": "حذف",
+    "quantity": "تعداد",
+    "freeShippingProgress": "تا ارسال رایگان {amount} تومان مانده",
+    "freeShippingReached": "🎉 ارسال رایگان برای شما فعال شد!"
+  },
+  "checkout": {
+    "title": "تکمیل خرید",
+    "shipping": "اطلاعات ارسال",
+    "firstName": "نام",
+    "lastName": "نام خانوادگی",
+    "phone": "شماره تماس",
+    "address": "آدرس",
+    "city": "شهر",
+    "province": "استان",
+    "postalCode": "کد پستی",
+    "shippingMethod": "روش ارسال",
+    "standardShipping": "ارسال معمولی (۳–۵ روز کاری)",
+    "expressShipping": "ارسال سریع (۱–۲ روز کاری)",
+    "paymentMethod": "روش پرداخت",
+    "cardTransfer": "کارت به کارت",
+    "whatsapp": "ثبت و هماهنگی در واتساپ",
+    "bankGateway": "درگاه بانکی (آزمایشی)",
+    "testModeNote": "این درگاه فقط برای آزمایش است و هیچ پرداخت واقعی انجام نمی‌شود.",
+    "orderSummary": "خلاصه سفارش",
+    "placeOrder": "ثبت سفارش",
+    "total": "مبلغ قابل پرداخت",
+    "shippingFee": "هزینه ارسال",
+    "freeShipping": "رایگان"
+  },
+  "about": {
+    "title": "درباره سولن",
+    "subtitle": "بدلیجات استیل با کیفیت"
+  },
+  "footer": {
+    "newsletter": "عضویت در خبرنامه",
+    "newsletterPlaceholder": "ایمیل خود را وارد کنید",
+    "newsletterSubmit": "عضویت",
+    "support": "پشتیبانی",
+    "instagram": "اینستاگرام",
+    "rights": "تمام حقوق محفوظ است",
+    "quickLinks": "دسترسی سریع",
+    "contact": "تماس با ما"
+  },
+  "metadata": {
+    "home": {
+      "title": "سولن | بدلیجات و اکسسوری استیل",
+      "description": "سولن — فروشگاه بدلیجات استیل ضدحساسیت و ضدزنگ. انگشتر، گردنبند، گوشواره و دستبند استیل با کیفیت بالا."
+    },
+    "collections": {
+      "title": "مجموعه‌ها | سولن",
+      "description": "مجموعه کامل بدلیجات استیل سولن"
+    },
+    "about": {
+      "title": "درباره ما | سولن",
+      "description": "آشنایی با برند سولن و داستان ما"
+    },
+    "checkout": {
+      "title": "تکمیل خرید | سولن",
+      "description": "تکمیل فرایند خرید شما"
+    }
+  }
+}

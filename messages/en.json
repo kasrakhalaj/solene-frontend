@@ -1,0 +1,119 @@
+{
+  "common": {
+    "brand": "سولن",
+    "brandLatin": "Solene",
+    "tagline": "Steel Fashion Accessories",
+    "taglineLong": "Hypoallergenic Steel Jewelry — Durable, Beautiful, Everyday",
+    "languageSwitcher": "فارسی",
+    "loading": "Loading..."
+  },
+  "nav": {
+    "home": "Home",
+    "collections": "Collections",
+    "rings": "Rings",
+    "necklaces": "Necklaces",
+    "earrings": "Earrings",
+    "bracelets": "Bracelets",
+    "about": "About",
+    "search": "Search",
+    "cart": "Cart",
+    "wishlist": "Wishlist",
+    "searchPlaceholder": "Search products..."
+  },
+  "announcement": {
+    "text": "Free shipping on orders over 1,000,000 Toman | Hypoallergenic & Rust-Proof Steel Accessories"
+  },
+  "product": {
+    "addToCart": "Add to Cart",
+    "addedToCart": "Added",
+    "outOfStock": "Out of Stock",
+    "new": "New",
+    "bestSeller": "Bestseller",
+    "viewDetails": "View Details",
+    "quickAdd": "Quick Add",
+    "selectSize": "Select Size",
+    "sizeGuide": "Size Guide",
+    "hypoallergenic": "Hypoallergenic",
+    "rustProof": "Rust-Proof",
+    "colorFast": "Color-Fast",
+    "freeShipping": "Insured Shipping",
+    "returnWindow": "7-Day Returns",
+    "finish": "Finish",
+    "silverSteel": "Silver-Tone Steel",
+    "goldSteel": "Gold-Plated Steel",
+    "details": "Details",
+    "care": "Care",
+    "shipping": "Shipping & Returns",
+    "relatedProducts": "You Might Also Like",
+    "toman": "Toman",
+    "originalPrice": "Original price"
+  },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty",
+    "emptyDescription": "Add some pieces you love",
+    "continueShopping": "Continue Shopping",
+    "subtotal": "Subtotal",
+    "checkout": "Checkout",
+    "remove": "Remove",
+    "quantity": "Quantity",
+    "freeShippingProgress": "{amount} Toman away from free shipping",
+    "freeShippingReached": "🎉 You've unlocked free shipping!"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "shipping": "Shipping Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phone": "Phone Number",
+    "address": "Address",
+    "city": "City",
+    "province": "Province",
+    "postalCode": "Postal Code",
+    "shippingMethod": "Shipping Method",
+    "standardShipping": "Standard Shipping (3–5 business days)",
+    "expressShipping": "Express Shipping (1–2 business days)",
+    "paymentMethod": "Payment Method",
+    "cardTransfer": "Card-to-Card Transfer",
+    "whatsapp": "Submit & Coordinate via WhatsApp",
+    "bankGateway": "Bank Gateway (Test Mode)",
+    "testModeNote": "This gateway is for testing only. No real payment will be processed.",
+    "orderSummary": "Order Summary",
+    "placeOrder": "Place Order",
+    "total": "Total",
+    "shippingFee": "Shipping",
+    "freeShipping": "Free"
+  },
+  "about": {
+    "title": "About Solene",
+    "subtitle": "Quality Steel Accessories"
+  },
+  "footer": {
+    "newsletter": "Newsletter",
+    "newsletterPlaceholder": "Enter your email",
+    "newsletterSubmit": "Subscribe",
+    "support": "Support",
+    "instagram": "Instagram",
+    "rights": "All rights reserved",
+    "quickLinks": "Quick Links",
+    "contact": "Contact"
+  },
+  "metadata": {
+    "home": {
+      "title": "Solene | Steel Fashion Accessories",
+      "description": "Solene — Hypoallergenic and rust-proof steel fashion accessories. Rings, necklaces, earrings, and bracelets."
+    },
+    "collections": {
+      "title": "Collections | Solene",
+      "description": "Browse the complete Solene steel accessories collection"
+    },
+    "about": {
+      "title": "About | Solene",
+      "description": "Learn about the Solene brand and our story"
+    },
+    "checkout": {
+      "title": "Checkout | Solene",
+      "description": "Complete your purchase"
+    }
+  }
+}
