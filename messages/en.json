@@ -120,7 +120,9 @@
     "instagram": "Instagram",
     "rights": "All rights reserved",
     "quickLinks": "Quick Links",
-    "contact": "Contact"
+    "contact": "Contact",
+    "newsletterSuccess": "Subscribed successfully!",
+    "newsletterError": "Please enter a valid email."
   },
   "metadata": {
     "home": {

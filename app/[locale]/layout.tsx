@@ -6,6 +6,7 @@ import { hasLocale, getDictionary } from './dictionaries'
 import { siteConfig } from '../../lib/siteConfig'
 import { Providers } from './providers'
 import { Navbar } from '@/components/layout/Navbar'
+import { Footer } from '@/components/layout/Footer'
 import '../globals.css'
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────
@@ -81,6 +82,7 @@ export default async function LocaleLayout({
         <Providers locale={l}>
           <Navbar dict={dict} />
           <main className="flex-1">{children}</main>
+          <Footer dict={dict} />
         </Providers>
       </body>
     </html>

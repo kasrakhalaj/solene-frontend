@@ -120,7 +120,9 @@
     "instagram": "اینستاگرام",
     "rights": "تمام حقوق محفوظ است",
     "quickLinks": "دسترسی سریع",
-    "contact": "تماس با ما"
+    "contact": "تماس با ما",
+    "newsletterSuccess": "عضویت با موفقیت انجام شد!",
+    "newsletterError": "لطفا یک ایمیل معتبر وارد کنید."
   },
   "metadata": {
     "home": {

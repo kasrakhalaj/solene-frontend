@@ -1,13 +1,9 @@
 import { getDictionary } from '@/app/[locale]/dictionaries'
 import { CheckoutClient } from './CheckoutClient'
 
-interface CheckoutPageProps {
-  params: Promise<{
-    locale: string
-  }>
-}
 
-export default async function CheckoutPage(props: CheckoutPageProps) {
+
+export default async function CheckoutPage() {
   const dict = await getDictionary()
 
   return (
