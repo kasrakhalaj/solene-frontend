@@ -4,7 +4,7 @@ import { useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { X } from 'lucide-react'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
-import { useLocale } from '@/app/[locale]/providers'
+
 
 interface SizeGuideModalProps {
   isOpen: boolean
@@ -13,7 +13,6 @@ interface SizeGuideModalProps {
 }
 
 export function SizeGuideModal({ isOpen, onClose, dict }: SizeGuideModalProps) {
-  const locale = useLocale()
   const overlayRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLElement | null>(null)

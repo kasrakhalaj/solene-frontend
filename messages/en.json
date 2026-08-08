@@ -22,7 +22,15 @@
     "close": "Close",
     "menu": "Menu",
     "noResults": "No results found",
-    "viewAll": "View All"
+    "viewAll": "View All",
+    "shopNow": "Shop Now"
+  },
+  "home": {
+    "heroTitle": "Shine in Every Moment",
+    "heroSubtitle": "The new collection of steel accessories, designed for your everyday beauty.",
+    "explore": "Explore Collections",
+    "brandStoryTitle": "The Solene Story",
+    "brandStoryText": "At Solene, we believe beauty should be accessible to everyone. Our products are crafted from hypoallergenic, stainless steel to offer not just stunning brilliance, but the durability needed for daily wear. Our goal is to provide jewelry that complements your modern lifestyle and completes your look."
   },
   "announcement": {
     "text": "Free shipping on orders over 1,000,000 Toman | Hypoallergenic & Rust-Proof Steel Accessories"
@@ -50,7 +58,14 @@
     "shipping": "Shipping & Returns",
     "relatedProducts": "You Might Also Like",
     "toman": "Toman",
-    "originalPrice": "Original price"
+    "originalPrice": "Original price",
+    "inStock": "In Stock",
+    "sortBy": "Sort By",
+    "sortFeatured": "Featured",
+    "sortPriceAsc": "Price: Low to High",
+    "sortPriceDesc": "Price: High to Low",
+    "sortNewest": "Newest",
+    "filterBy": "Filter"
   },
   "cart": {
     "title": "Your Cart",
@@ -86,7 +101,12 @@
     "placeOrder": "Place Order",
     "total": "Total",
     "shippingFee": "Shipping",
-    "freeShipping": "Free"
+    "freeShipping": "Free",
+    "uploadReceipt": "Upload Receipt",
+    "simulatePayment": "Simulate Payment",
+    "processing": "Processing...",
+    "paymentSuccess": "Payment Successful",
+    "paymentFailed": "Payment Failed"
   },
   "about": {
     "title": "About Solene",
