@@ -18,6 +18,7 @@
     "search": "Search",
     "cart": "Cart",
     "wishlist": "Wishlist",
+    "login": "Log In",
     "searchPlaceholder": "Search products...",
     "close": "Close",
     "menu": "Menu",
@@ -147,5 +148,48 @@
       "title": "Checkout | Solene",
       "description": "Complete your purchase"
     }
+  },
+  "auth": {
+    "loginTitle": "Welcome Back",
+    "loginDescription": "Sign in to access your wishlist, orders, and exclusive offers.",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "e.g. 09123456789",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm Password",
+    "sendOtp": "Send Verification Code",
+    "loginWithEmail": "Log in with Email",
+    "loginWithPhone": "Log in with Phone",
+    "createAccount": "Create an account",
+    "haveAccount": "Already have an account? Log in",
+    "signup": "Sign Up",
+    "otpTitle": "Verify Your Phone",
+    "otpDescription": "We've sent a 6-digit code to {phone}",
+    "otpPlaceholder": "Enter 6-digit code",
+    "verifyOtp": "Verify Code",
+    "resendOtp": "Resend Code",
+    "resendCooldown": "Resend in {seconds}s",
+    "continueAsGuest": "Continue as Guest",
+    "errors": {
+      "invalidPhone": "Please enter a valid mobile number.",
+      "invalidOtp": "Incorrect code. Please try again.",
+      "invalidEmail": "Please enter a valid email address.",
+      "passwordMismatch": "Passwords do not match.",
+      "passwordTooShort": "Password must be at least 6 characters.",
+      "emailExists": "An account with this email already exists.",
+      "invalidCredentials": "Incorrect email or password.",
+      "general": "Something went wrong. Please try again."
+    }
+  },
+  "account": {
+    "title": "My Account",
+    "welcome": "Hello",
+    "profile": "Profile Information",
+    "orders": "Order History",
+    "noOrders": "You haven't placed any orders yet.",
+    "startShopping": "Start Shopping",
+    "wishlist": "My Wishlist",
+    "logout": "Log Out"
   }
 }

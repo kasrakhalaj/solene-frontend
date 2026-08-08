@@ -18,6 +18,7 @@
     "search": "جستجو",
     "cart": "سبد خرید",
     "wishlist": "علاقه‌مندی‌ها",
+    "login": "ورود",
     "searchPlaceholder": "جستجو در محصولات...",
     "close": "بستن",
     "menu": "منو",
@@ -147,5 +148,48 @@
       "title": "تکمیل خرید | سولن",
       "description": "تکمیل فرایند خرید شما"
     }
+  },
+  "auth": {
+    "loginTitle": "خوش آمدید",
+    "loginDescription": "برای دسترسی به علاقه‌مندی‌ها و سفارشات خود وارد شوید.",
+    "phoneLabel": "شماره موبایل",
+    "phonePlaceholder": "مثال: 09123456789",
+    "emailLabel": "آدرس ایمیل",
+    "emailPlaceholder": "شما@example.com",
+    "passwordLabel": "رمز عبور",
+    "confirmPasswordLabel": "تکرار رمز عبور",
+    "sendOtp": "ارسال کد تایید",
+    "loginWithEmail": "ورود با ایمیل",
+    "loginWithPhone": "ورود با شماره موبایل",
+    "createAccount": "ایجاد حساب کاربری",
+    "haveAccount": "حساب کاربری دارید؟ وارد شوید",
+    "signup": "ثبت نام",
+    "otpTitle": "تایید شماره موبایل",
+    "otpDescription": "کد ۶ رقمی به شماره {phone} ارسال شد",
+    "otpPlaceholder": "کد ۶ رقمی را وارد کنید",
+    "verifyOtp": "تایید کد",
+    "resendOtp": "ارسال مجدد کد",
+    "resendCooldown": "ارسال مجدد تا {seconds} ثانیه",
+    "continueAsGuest": "ادامه به عنوان مهمان",
+    "errors": {
+      "invalidPhone": "لطفاً یک شماره موبایل معتبر وارد کنید.",
+      "invalidOtp": "کد وارد شده اشتباه است. لطفاً دوباره تلاش کنید.",
+      "invalidEmail": "لطفاً یک آدرس ایمیل معتبر وارد کنید.",
+      "passwordMismatch": "رمزهای عبور مطابقت ندارند.",
+      "passwordTooShort": "رمز عبور باید حداقل ۶ کاراکتر باشد.",
+      "emailExists": "حساب کاربری با این ایمیل از قبل وجود دارد.",
+      "invalidCredentials": "ایمیل یا رمز عبور اشتباه است.",
+      "general": "خطایی رخ داد. لطفاً دوباره تلاش کنید."
+    }
+  },
+  "account": {
+    "title": "حساب کاربری من",
+    "welcome": "سلام",
+    "profile": "اطلاعات حساب",
+    "orders": "تاریخچه سفارشات",
+    "noOrders": "شما هنوز هیچ سفارشی ثبت نکرده‌اید.",
+    "startShopping": "شروع خرید",
+    "wishlist": "علاقه‌مندی‌های من",
+    "logout": "خروج از حساب"
   }
 }

@@ -11,8 +11,10 @@ import {
   Menu,
   X,
   Globe,
+  User,
 } from 'lucide-react'
 import { useStore, cartCount } from '@/lib/cartStore'
+import { useAuthStore } from '@/lib/authStore'
 import { useLocale } from '@/app/[locale]/providers'
 import { siteConfig } from '@/lib/siteConfig'
 import { cn } from '@/lib/utils'
@@ -53,6 +55,17 @@ export function Navbar({ dict }: NavbarProps) {
   const openCart = useStore((s) => s.openCart)
   const wishlist = useStore((s) => s.wishlist)
   const count = cartCount(items)
+  const { isAuthenticated, user, _hasHydrated } = useAuthStore()
+  const [mounted, setMounted] = useState(false)
+
+  // Track scroll for background transition
+  useEffect(() => {
+    setMounted(true)
+    const handler = () => setIsScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', handler, { passive: true })
+    handler() // initial check
+    return () => window.removeEventListener('scroll', handler)
+  }, [])
 
   // ── Language switch path ──
   const otherLocale = locale === 'fa' ? 'en' : 'fa'
@@ -161,6 +174,8 @@ export function Navbar({ dict }: NavbarProps) {
               <span>{dict.common.languageSwitcher}</span>
             </Link>
 
+            <div className="hidden lg:block w-px h-5 bg-brand-border mx-1" />
+
             {/* Search */}
             <button
               onClick={() => setSearchOpen(true)}
@@ -169,6 +184,24 @@ export function Navbar({ dict }: NavbarProps) {
             >
               <Search size={20} />
             </button>
+
+            {/* Account / Login */}
+            {(!mounted || !_hasHydrated) ? (
+              <div className="hidden sm:flex items-center justify-center w-11 h-11 rounded-full text-brand-muted">
+                <User size={20} />
+              </div>
+            ) : (
+              <Link
+                href={`/${locale}/account`}
+                className="hidden sm:flex items-center justify-center w-11 h-11 rounded-full hover:bg-brand-cream transition-colors text-brand-muted hover:text-brand-text relative"
+                aria-label={dict.nav.login || 'Account'}
+              >
+                <User size={20} />
+                {isAuthenticated && (
+                  <span className="absolute top-2 end-2 w-2 h-2 rounded-full bg-green-500 ring-2 ring-brand-surface" />
+                )}
+              </Link>
+            )}
 
             {/* Wishlist */}
             <Link
@@ -255,6 +288,19 @@ export function Navbar({ dict }: NavbarProps) {
                   )}
                 >
                   {dict.nav.wishlist}
+                </Link>
+                <Link
+                  href={`/${locale}/account`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    'flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-colors',
+                    pathname.includes('/account') || pathname.includes('/login')
+                      ? 'bg-brand-cream text-brand-text'
+                      : 'text-brand-muted hover:bg-brand-cream/60',
+                  )}
+                >
+                  <User size={18} />
+                  <span>{dict.account?.title || dict.nav.login || 'Account'}</span>
                 </Link>
 
                 {/* Language switcher (mobile) */}

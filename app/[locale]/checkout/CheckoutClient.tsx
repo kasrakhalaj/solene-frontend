@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useStore } from '@/lib/cartStore'
+import { useAuthStore } from '@/lib/authStore'
 import { formatPrice, cn } from '@/lib/utils'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
 import { siteConfig } from '@/lib/siteConfig'
@@ -26,6 +27,31 @@ export function CheckoutClient({ dict }: CheckoutClientProps) {
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentResult, setPaymentResult] = useState<'success' | 'failed' | null>(null)
   const [receiptFile, setReceiptFile] = useState<File | null>(null)
+  const { user } = useAuthStore()
+
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
+  const [address, setAddress] = useState('')
+  const [province, setProvince] = useState('')
+  const [city, setCity] = useState('')
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (user) {
+      setPhone(prev => prev || user.phone || '')
+      setEmail(prev => prev || user.email || '')
+      if (user.displayName) {
+        const parts = user.displayName.split(' ')
+        setFirstName(prev => prev || parts[0] || '')
+        if (parts.length > 1) {
+          setLastName(prev => prev || parts.slice(1).join(' ') || '')
+        }
+      }
+    }
+  }, [user])
+
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Calculate totals
