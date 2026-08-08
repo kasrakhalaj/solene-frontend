@@ -7,6 +7,20 @@
     "languageSwitcher": "English",
     "loading": "در حال بارگذاری..."
   },
+  "search": {
+    "placeholder": "جستجو محصولات...",
+    "clear": "پاک کردن",
+    "close": "بستن",
+    "trending": "جستجوهای پرطرفدار",
+    "popular": "محبوب‌ترین‌ها",
+    "viewAll": "مشاهده همه نتایج →",
+    "noResults": {
+      "title": "چیزی پیدا نکردیم",
+      "description": "جستجوی خود را کوتاه‌تر یا متفاوت امتحان کنید."
+    },
+    "resultsTitle": "نتایج جستجو برای «{query}»",
+    "resultsCount": "{count} محصول یافت شد"
+  },
   "nav": {
     "home": "خانه",
     "collections": "مجموعه‌ها",

@@ -7,6 +7,20 @@
     "languageSwitcher": "فارسی",
     "loading": "Loading..."
   },
+  "search": {
+    "placeholder": "Search products...",
+    "clear": "Clear search",
+    "close": "Close search",
+    "trending": "TRENDING",
+    "popular": "POPULAR",
+    "viewAll": "View all results →",
+    "noResults": {
+      "title": "Nothing matched your search",
+      "description": "Try a shorter or different search term."
+    },
+    "resultsTitle": "Search results for \"{query}\"",
+    "resultsCount": "{count} products found"
+  },
   "nav": {
     "home": "Home",
     "collections": "Collections",
