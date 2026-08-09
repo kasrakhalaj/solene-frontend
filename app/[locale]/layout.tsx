@@ -64,6 +64,7 @@ export default async function LocaleLayout({
     <html
       lang={l}
       dir={dir}
+      data-scroll-behavior="smooth"
       className={`${inter.variable} ${vazirmatn.variable} h-full`}
     >
       <body

@@ -81,7 +81,7 @@ export function ProductCard({ product, dict, priority = false }: ProductCardProp
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Image container */}
-      <div className="relative aspect-[4/5] bg-brand-cream rounded-2xl overflow-hidden mb-3">
+      <div className="relative mb-4 aspect-[4/5] overflow-hidden rounded-2xl bg-brand-cream shadow-[0_10px_28px_rgba(69,55,35,0.06)] transition-shadow duration-500 group-hover:shadow-[0_18px_38px_rgba(69,55,35,0.12)]">
         <Link
           href={`/${locale}/products/${product.slug}`}
           aria-label={title}
@@ -139,7 +139,7 @@ export function ProductCard({ product, dict, priority = false }: ProductCardProp
         {/* Wishlist Button */}
         <button
           onClick={handleWishlist}
-          className="absolute top-3 end-3 z-10 p-2 rounded-full bg-white/80 backdrop-blur-md text-brand-text hover:bg-white transition-colors"
+          className="absolute end-3 top-3 z-10 flex min-h-10 min-w-10 items-center justify-center rounded-full bg-white/85 text-brand-text shadow-sm backdrop-blur-md hover:scale-105 hover:bg-white"
           aria-label={isWishlisted ? dict.product.removeFromWishlist : dict.product.addToWishlist}
         >
           <Heart 
@@ -150,13 +150,13 @@ export function ProductCard({ product, dict, priority = false }: ProductCardProp
 
         {/* Quick Add overlay */}
         <div className={cn(
-          "absolute z-10 bottom-0 inset-x-0 p-3 transition-transform duration-300 group-focus-within:translate-y-0",
-          isHovered ? "translate-y-0" : "translate-y-full"
+          "absolute inset-x-0 bottom-0 z-10 p-3 transition-transform duration-300 group-focus-within:translate-y-0 md:translate-y-full",
+          isHovered && "md:translate-y-0"
         )}>
           <button
             onClick={handleQuickAdd}
             disabled={!product.inStock}
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-full bg-white/90 backdrop-blur-md text-sm font-medium text-brand-text hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-white/92 px-3 py-2.5 text-xs font-medium text-brand-text shadow-sm backdrop-blur-md hover:bg-white disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
           >
             <AnimatePresence mode="wait">
               {isAdded ? (
@@ -188,8 +188,8 @@ export function ProductCard({ product, dict, priority = false }: ProductCardProp
       </div>
 
       {/* Product Info */}
-      <Link href={`/${locale}/products/${product.slug}`} className="block space-y-1">
-        <h3 className="text-sm font-medium text-brand-text truncate">
+      <Link href={`/${locale}/products/${product.slug}`} className="block space-y-1.5">
+        <h3 className="truncate text-sm font-medium tracking-[-0.01em] text-brand-text transition-colors group-hover:text-brand-gold">
           {title}
         </h3>
         <div className="flex items-center gap-2">
