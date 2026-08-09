@@ -1,14 +1,15 @@
 'use client'
 
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useRef, useState, type ReactNode } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { useAuthStore } from '@/lib/authStore'
+import { selectIsAuthenticated, useAuthStore } from '@/lib/authStore'
 import { useStore as useCartStore } from '@/lib/cartStore'
 import { useToastStore } from '@/lib/toastStore'
 import { motion, AnimatePresence } from 'motion/react'
 import { useLocale } from '@/app/[locale]/providers'
 import { X } from 'lucide-react'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
+import { useDialogA11y } from '@/components/ui/useDialogA11y'
 
 interface WishlistContextType {
   handleWishlistAction: (productId: string) => void
@@ -32,8 +33,9 @@ interface WishlistProviderProps {
 export function WishlistProvider({ children, dict }: WishlistProviderProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [pendingProductId, setPendingProductId] = useState<string | null>(null)
+  const modalRef = useRef<HTMLDivElement>(null)
   
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const isAuthenticated = useAuthStore(selectIsAuthenticated)
   const toggleWishlist = useCartStore((s) => s.toggleWishlist)
   
   const router = useRouter()
@@ -48,11 +50,11 @@ export function WishlistProvider({ children, dict }: WishlistProviderProps) {
       
       if (isCurrentlyWishlisted) {
         useToastStore.getState().addToast({
-          title: dict.toast?.removedFromWishlist || (locale === 'fa' ? 'از علاقه‌مندی‌ها حذف شد' : 'Removed from wishlist')
+          title: dict.toast.removedFromWishlist
         })
       } else {
         useToastStore.getState().addToast({
-          title: dict.toast?.addedToWishlist || (locale === 'fa' ? 'به علاقه‌مندی‌ها اضافه شد' : 'Added to wishlist')
+          title: dict.toast.addedToWishlist
         })
       }
     } else {
@@ -79,6 +81,12 @@ export function WishlistProvider({ children, dict }: WishlistProviderProps) {
     router.push(url)
   }
 
+  useDialogA11y({
+    isOpen: isModalOpen,
+    onClose: closeModal,
+    containerRef: modalRef,
+  })
+
   return (
     <WishlistContext.Provider value={{ handleWishlistAction }}>
       {children}
@@ -88,6 +96,7 @@ export function WishlistProvider({ children, dict }: WishlistProviderProps) {
         {isModalOpen && (
           <>
             <motion.div
+              ref={modalRef}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -109,7 +118,7 @@ export function WishlistProvider({ children, dict }: WishlistProviderProps) {
               <button
                 onClick={closeModal}
                 className="absolute top-4 right-4 rtl:right-auto rtl:left-4 p-2 text-brand-muted hover:text-brand-text hover:bg-brand-cream rounded-full transition-colors"
-                aria-label={dict.nav.close || 'Close'}
+                aria-label={dict.nav.close}
               >
                 <X size={20} />
               </button>
@@ -122,11 +131,11 @@ export function WishlistProvider({ children, dict }: WishlistProviderProps) {
               </div>
 
               <h2 id="wishlist-modal-title" className="text-xl font-semibold text-brand-text mb-2">
-                {dict.wishlistModal?.title || (locale === 'fa' ? 'علاقه‌مندی‌های خود را ذخیره کنید' : 'Save your favorites')}
+                {dict.wishlistModal.title}
               </h2>
               
               <p className="text-brand-muted text-sm mb-8 leading-relaxed">
-                {dict.wishlistModal?.description || (locale === 'fa' ? 'برای ذخیره قطعات مورد علاقه در حساب کاربری خود، وارد شوید.' : 'Log in to keep your favorite pieces saved to your account.')}
+                {dict.wishlistModal.description}
               </p>
 
               <div className="flex flex-col w-full gap-3">
@@ -134,14 +143,14 @@ export function WishlistProvider({ children, dict }: WishlistProviderProps) {
                   onClick={handleLoginClick}
                   className="w-full py-3 bg-brand-text text-brand-surface rounded-full font-medium hover:bg-brand-text/90 transition-colors"
                 >
-                  {dict.wishlistModal?.login || (locale === 'fa' ? 'ورود به حساب' : 'Log in')}
+                  {dict.wishlistModal.login}
                 </button>
                 
                 <button
                   onClick={closeModal}
                   className="w-full py-3 text-brand-text font-medium hover:bg-brand-cream rounded-full transition-colors"
                 >
-                  {dict.wishlistModal?.notNow || (locale === 'fa' ? 'فعلا نه' : 'Not now')}
+                  {dict.wishlistModal.notNow}
                 </button>
               </div>
             </motion.div>

@@ -1,11 +1,10 @@
 'use client'
 
-import { useAuthStore } from '@/lib/authStore'
+import { selectIsAuthenticated, useAuthStore } from '@/lib/authStore'
 import { useLocale } from '@/app/[locale]/providers'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
 import Link from 'next/link'
 import { Heart, Package, UserCircle, LogOut } from 'lucide-react'
-import { useEffect, useState } from 'react'
 
 interface AccountClientProps {
   dict: Dictionary
@@ -13,15 +12,12 @@ interface AccountClientProps {
 
 export function AccountClient({ dict }: AccountClientProps) {
   const locale = useLocale()
-  const { user, isAuthenticated, _hasHydrated, logout } = useAuthStore()
-  const [mounted, setMounted] = useState(false)
+  const user = useAuthStore((state) => state.user)
+  const isAuthenticated = useAuthStore(selectIsAuthenticated)
+  const hasHydrated = useAuthStore((state) => state._hasHydrated)
+  const logout = useAuthStore((state) => state.logout)
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true)
-  }, [])
-
-  if (!mounted || !_hasHydrated) return null
+  if (!hasHydrated) return null
 
   if (!isAuthenticated || !user) {
     return (
@@ -92,8 +88,7 @@ export function AccountClient({ dict }: AccountClientProps) {
             </div>
             <p className="text-brand-text font-medium mb-2">{dict.account.noOrders}</p>
             <p className="text-sm text-brand-muted mb-6">
-              {/* Add localized generic text later if needed */}
-              {locale === 'fa' ? 'سفارشات شما پس از ثبت در اینجا نمایش داده می‌شوند.' : 'Your orders will appear here once placed.'}
+              {dict.account.ordersDescription}
             </p>
             <Link 
               href={`/${locale}/collections/rings`}

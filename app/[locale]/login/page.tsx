@@ -1,6 +1,16 @@
 import { getDictionary } from '@/app/[locale]/dictionaries'
 import { LoginClient } from './LoginClient'
 import { Suspense } from 'react'
+import type { Metadata } from 'next'
+import { localeAlternates } from '@/lib/metadata'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const dict = await getDictionary()
+  return {
+    ...dict.metadata.login,
+    alternates: localeAlternates('/login'),
+  }
+}
 
 export default async function LoginPage() {
   const dict = await getDictionary()

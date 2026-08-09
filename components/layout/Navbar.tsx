@@ -14,7 +14,7 @@ import {
   User,
 } from 'lucide-react'
 import { useStore, cartCount } from '@/lib/cartStore'
-import { useAuthStore } from '@/lib/authStore'
+import { selectIsAuthenticated, useAuthStore } from '@/lib/authStore'
 import { useLocale } from '@/app/[locale]/providers'
 import { siteConfig } from '@/lib/siteConfig'
 import { cn } from '@/lib/utils'
@@ -55,18 +55,8 @@ export function Navbar({ dict }: NavbarProps) {
   const openCart = useStore((s) => s.openCart)
   const wishlist = useStore((s) => s.wishlist)
   const count = cartCount(items)
-  const { isAuthenticated, user, _hasHydrated } = useAuthStore()
-  const [mounted, setMounted] = useState(false)
-
-  // Track scroll for background transition
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true)
-    const handler = () => setIsScrolled(window.scrollY > 10)
-    window.addEventListener('scroll', handler, { passive: true })
-    handler() // initial check
-    return () => window.removeEventListener('scroll', handler)
-  }, [])
+  const isAuthenticated = useAuthStore(selectIsAuthenticated)
+  const hasHydrated = useAuthStore((state) => state._hasHydrated)
 
   // ── Language switch path ──
   const otherLocale = locale === 'fa' ? 'en' : 'fa'
@@ -83,7 +73,14 @@ export function Navbar({ dict }: NavbarProps) {
   // ── Lock body scroll when mobile menu open ──
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileMenuOpen(false)
+    }
+    if (isMobileMenuOpen) document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = ''
+    }
   }, [isMobileMenuOpen])
 
   return (
@@ -114,6 +111,7 @@ export function Navbar({ dict }: NavbarProps) {
               className="lg:hidden flex items-center justify-center w-11 h-11 rounded-full hover:bg-brand-cream transition-colors"
               aria-label={dict.nav.menu}
               aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-navigation"
             >
               {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
@@ -131,7 +129,7 @@ export function Navbar({ dict }: NavbarProps) {
                       : 'text-brand-muted hover:text-brand-text hover:bg-brand-cream/60',
                   )}
                 >
-                  {dict.nav[cat as keyof typeof dict.nav]}
+                  {dict.nav[cat]}
                 </Link>
               ))}
               <Link
@@ -187,7 +185,7 @@ export function Navbar({ dict }: NavbarProps) {
             </button>
 
             {/* Account / Login */}
-            {(!mounted || !_hasHydrated) ? (
+            {!hasHydrated ? (
               <div className="hidden sm:flex items-center justify-center w-11 h-11 rounded-full text-brand-muted">
                 <User size={20} />
               </div>
@@ -244,6 +242,7 @@ export function Navbar({ dict }: NavbarProps) {
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
+              id="mobile-navigation"
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
@@ -263,7 +262,7 @@ export function Navbar({ dict }: NavbarProps) {
                         : 'text-brand-muted hover:bg-brand-cream/60',
                     )}
                   >
-                    {dict.nav[cat as keyof typeof dict.nav]}
+                    {dict.nav[cat]}
                   </Link>
                 ))}
                 <Link

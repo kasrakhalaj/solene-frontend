@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
+import { useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'motion/react'
@@ -8,8 +8,9 @@ import { X, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react'
 import { useStore, cartTotal } from '@/lib/cartStore'
 import { useLocale } from '@/app/[locale]/providers'
 import { siteConfig } from '@/lib/siteConfig'
-import { formatPrice } from '@/lib/utils'
+import { formatNumber, formatPrice } from '@/lib/utils'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
+import { useDialogA11y } from '@/components/ui/useDialogA11y'
 
 interface CartDrawerProps {
   dict: Dictionary
@@ -24,53 +25,13 @@ export function CartDrawer({ dict }: CartDrawerProps) {
   const removeFromCart = useStore((s) => s.removeFromCart)
   const updateQuantity = useStore((s) => s.updateQuantity)
   const drawerRef = useRef<HTMLDivElement>(null)
-  const triggerRef = useRef<HTMLElement | null>(null)
 
   const total = cartTotal(items)
   const threshold = siteConfig.freeShippingThreshold
   const remaining = Math.max(threshold - total, 0)
   const progress = Math.min(total / threshold, 1)
 
-  // Save trigger element on open, restore focus on close
-  useEffect(() => {
-    if (isOpen) {
-      triggerRef.current = document.activeElement as HTMLElement
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-      triggerRef.current?.focus()
-    }
-    return () => { document.body.style.overflow = '' }
-  }, [isOpen])
-
-  // Focus trap + Escape
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { closeCart(); return }
-      if (e.key !== 'Tab' || !drawerRef.current) return
-      const focusable = drawerRef.current.querySelectorAll<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-      )
-      if (focusable.length === 0) return
-      const first = focusable[0]
-      const last = focusable[focusable.length - 1]
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault(); last.focus()
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault(); first.focus()
-      }
-    },
-    [closeCart],
-  )
-
-  useEffect(() => {
-    if (!isOpen) return
-    document.addEventListener('keydown', handleKeyDown)
-    // Auto-focus close button
-    const firstBtn = drawerRef.current?.querySelector<HTMLElement>('button')
-    firstBtn?.focus()
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, handleKeyDown])
+  useDialogA11y({ isOpen, onClose: closeCart, containerRef: drawerRef })
 
   return (
     <AnimatePresence>
@@ -124,10 +85,7 @@ export function CartDrawer({ dict }: CartDrawerProps) {
                   <p className="text-sm text-brand-muted mb-2">
                     {dict.cart.freeShippingProgress.replace(
                       '{amount}',
-                      formatPrice(remaining, locale).replace(
-                        locale === 'fa' ? ' تومان' : ' Toman',
-                        '',
-                      ),
+                      formatNumber(remaining, locale),
                     )}
                   </p>
                 ) : (

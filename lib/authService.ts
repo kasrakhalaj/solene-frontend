@@ -20,9 +20,25 @@ export interface AuthService {
   logout(token: string): Promise<void>
 }
 
+type StoredUser = User & { password?: string }
+
+function toPublicUser(user: StoredUser): User {
+  return {
+    id: user.id,
+    phone: user.phone,
+    email: user.email,
+    displayName: user.displayName,
+    createdAt: user.createdAt,
+    authMethod: user.authMethod,
+  }
+}
+
 // ─── Utility: Normalize Iranian phone numbers ──────────────────────────────────
 export function normalizePhone(phone: string): string {
-  let cleaned = phone.replace(/[^0-9+]/g, '')
+  const westernDigits = phone
+    .replace(/[\u06F0-\u06F9]/g, (digit) => String(digit.charCodeAt(0) - 0x06F0))
+    .replace(/[\u0660-\u0669]/g, (digit) => String(digit.charCodeAt(0) - 0x0660))
+  let cleaned = westernDigits.replace(/[^0-9+]/g, '')
   if (cleaned.startsWith('+98')) {
     cleaned = '0' + cleaned.slice(3)
   } else if (cleaned.startsWith('98')) {
@@ -33,7 +49,7 @@ export function normalizePhone(phone: string): string {
 
 // ─── In-memory Mock Database (Do not persist to localStorage) ────────────────
 const MOCK_DB = {
-  users: new Map<string, User & { password?: string }>(),
+  users: new Map<string, StoredUser>(),
   sessions: new Set<string>()
 }
 
@@ -79,8 +95,7 @@ class MockAuthServiceImpl implements AuthService {
     const token = `tok_${Date.now()}_${Math.random().toString(36).substring(7)}`
     MOCK_DB.sessions.add(token)
 
-    const { password: _, ...safeUser } = user
-    return { token, user: safeUser }
+    return { token, user: toPublicUser(user) }
   }
 
   async signupWithEmail(email: string, password: string): Promise<AuthSession> {
@@ -104,8 +119,7 @@ class MockAuthServiceImpl implements AuthService {
     const token = `tok_${Date.now()}_${Math.random().toString(36).substring(7)}`
     MOCK_DB.sessions.add(token)
 
-    const { password: _, ...safeUser } = user
-    return { token, user: safeUser }
+    return { token, user: toPublicUser(user) }
   }
 
   async loginWithEmail(email: string, password: string): Promise<AuthSession> {
@@ -121,8 +135,7 @@ class MockAuthServiceImpl implements AuthService {
     const token = `tok_${Date.now()}_${Math.random().toString(36).substring(7)}`
     MOCK_DB.sessions.add(token)
 
-    const { password: _, ...safeUser } = user
-    return { token, user: safeUser }
+    return { token, user: toPublicUser(user) }
   }
 
   async logout(token: string): Promise<void> {
@@ -131,6 +144,6 @@ class MockAuthServiceImpl implements AuthService {
   }
 }
 
-// Export a singleton instance. 
-// When replacing with Go backend, just implement a new class and export it here.
+// Frontend-only adapter. A Go integration will also need server-issued session
+// semantics, transport/error mapping, and secure token handling at this boundary.
 export const authService: AuthService = new MockAuthServiceImpl()

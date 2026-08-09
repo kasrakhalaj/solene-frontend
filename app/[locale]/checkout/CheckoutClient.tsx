@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useStore } from '@/lib/cartStore'
+import { cartTotal, useStore } from '@/lib/cartStore'
 import { useAuthStore } from '@/lib/authStore'
 import { formatPrice, cn } from '@/lib/utils'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
@@ -32,7 +32,6 @@ export function CheckoutClient({ dict }: CheckoutClientProps) {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [phone, setPhone] = useState('')
-  const [email, setEmail] = useState('')
   const [address, setAddress] = useState('')
   const [province, setProvince] = useState('')
   const [city, setCity] = useState('')
@@ -41,7 +40,6 @@ export function CheckoutClient({ dict }: CheckoutClientProps) {
     if (user) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setPhone(prev => prev || user.phone || '')
-      setEmail(prev => prev || user.email || '')
       if (user.displayName) {
         const parts = user.displayName.split(' ')
         setFirstName(prev => prev || parts[0] || '')
@@ -55,9 +53,7 @@ export function CheckoutClient({ dict }: CheckoutClientProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Calculate totals
-  const subtotal = useMemo(() => {
-    return items.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
-  }, [items])
+  const subtotal = cartTotal(items)
   const shippingFee = subtotal >= siteConfig.freeShippingThreshold ? 0 : 50_000
   const total = subtotal + shippingFee
 
@@ -167,7 +163,7 @@ export function CheckoutClient({ dict }: CheckoutClientProps) {
                 {paymentMethod === 'card' && (
                   <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden">
                     <div className="p-4 pt-0 text-sm text-brand-muted border-t border-brand-border mt-2 space-y-4">
-                      <p>لطفاً مبلغ کل را به شماره کارت زیر واریز نموده و فیش را آپلود کنید:</p>
+                      <p>{dict.checkout.cardTransferInstructions}</p>
                       <div className="p-3 bg-brand-cream rounded-xl text-center font-mono tracking-wider text-lg text-brand-text" dir="ltr">
                         6037 - 9911 - 2233 - 4455
                       </div>
@@ -290,8 +286,8 @@ export function CheckoutClient({ dict }: CheckoutClientProps) {
           <h2 className="text-xl font-semibold text-brand-text mb-6">{dict.checkout.orderSummary}</h2>
           
           <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pe-2">
-            {items.map((item, idx) => (
-              <div key={idx} className="flex items-center gap-4">
+            {items.map((item) => (
+              <div key={`${item.product.id}::${item.size}`} className="flex items-center gap-4">
                 <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-brand-cream shrink-0">
                   <Image src={item.product.images[0]} alt="" fill className="object-cover" />
                   <div className="absolute -top-2 -end-2 w-5 h-5 bg-brand-text text-brand-surface text-[10px] font-bold rounded-full flex items-center justify-center z-10 border border-white">

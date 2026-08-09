@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation'
 import { getDictionary } from '@/app/[locale]/dictionaries'
-import { getProductsByCategory, categories, ProductCategory } from '@/lib/mockData'
+import { catalogService } from '@/lib/catalogService'
 import { CollectionClient } from './CollectionClient'
+import type { Metadata } from 'next'
+import { localeAlternates } from '@/lib/metadata'
 
 interface CollectionPageProps {
   params: Promise<{
@@ -13,6 +15,7 @@ interface CollectionPageProps {
 export async function generateStaticParams() {
   const locales = ['en', 'fa']
   const paths: { locale: string; category: string }[] = []
+  const categories = catalogService.getCategories()
   
   for (const locale of locales) {
     for (const cat of categories) {
@@ -23,18 +26,27 @@ export async function generateStaticParams() {
   return paths
 }
 
+export async function generateMetadata(props: CollectionPageProps): Promise<Metadata> {
+  const { category } = await props.params
+  const dict = await getDictionary()
+  return {
+    ...dict.metadata.collections,
+    alternates: localeAlternates(`/collections/${category}`),
+  }
+}
+
 export default async function CollectionPage(props: CollectionPageProps) {
   const params = await props.params;
   const categorySlug = params.category;
   
-  const category = categories.find(c => c.slug === categorySlug)
+  const category = catalogService.getCategories().find(c => c.slug === categorySlug)
   if (!category) {
     notFound()
   }
 
   const dict = await getDictionary()
-  const products = getProductsByCategory(category.key as ProductCategory)
-  const categoryName = dict.nav[category.key as keyof typeof dict.nav]
+  const products = catalogService.getByCategory(category.key)
+  const categoryName = dict.nav[category.key]
 
   return (
     <main className="min-h-screen py-12 lg:py-20 px-4 lg:px-16 max-w-[1600px] mx-auto w-full">
@@ -43,7 +55,7 @@ export default async function CollectionPage(props: CollectionPageProps) {
           {categoryName}
         </h1>
         <p className="text-brand-muted text-lg">
-          {products.length} {dict.product.relatedProducts.split(' ')[0]}
+          {dict.product.productCount.replace('{count}', String(products.length))}
         </p>
       </div>
 

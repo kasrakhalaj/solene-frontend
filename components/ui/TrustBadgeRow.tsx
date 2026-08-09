@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
 import { cn } from '@/lib/utils'
 
@@ -10,6 +10,7 @@ interface TrustBadgeRowProps {
 }
 
 export function TrustBadgeRow({ dict, className = '' }: TrustBadgeRowProps) {
+  const shouldReduceMotion = useReducedMotion()
   const coreBadges = [
     { id: 'hypoallergenic', label: dict.product.hypoallergenic },
     { id: 'rustProof', label: dict.product.rustProof },
@@ -25,10 +26,12 @@ export function TrustBadgeRow({ dict, className = '' }: TrustBadgeRowProps) {
       className={cn("overflow-hidden flex items-center py-6 select-none", className)}
       dir="ltr"
     >
+      <span className="sr-only">{coreBadges.map((badge) => badge.label).join(', ')}</span>
       <motion.div
+        aria-hidden="true"
         className="flex items-center gap-12 shrink-0 pr-12"
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{ repeat: Infinity, ease: "linear", duration: 40 }}
+        animate={shouldReduceMotion ? { x: 0 } : { x: ["0%", "-50%"] }}
+        transition={shouldReduceMotion ? { duration: 0 } : { repeat: Infinity, ease: "linear", duration: 40 }}
       >
         {loopItems.map((badge, idx) => (
           <div key={`${badge.id}-${idx}`} className="flex items-center gap-12">

@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
-import { useAuthStore } from '@/lib/authStore'
+import { selectIsAuthenticated, useAuthStore } from '@/lib/authStore'
 import { useStore as useCartStore } from '@/lib/cartStore'
 import { useLocale } from '@/app/[locale]/providers'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
@@ -24,7 +24,11 @@ export function LoginClient({ dict }: LoginClientProps) {
   const wishlistAdd = searchParams.get('wishlist_add')
   const isFromCheckout = redirectUrl?.includes('checkout')
 
-  const { loginWithPhone, verifyOtp, loginWithEmail, signupWithEmail, isAuthenticated } = useAuthStore()
+  const loginWithPhone = useAuthStore((state) => state.loginWithPhone)
+  const verifyOtp = useAuthStore((state) => state.verifyOtp)
+  const loginWithEmail = useAuthStore((state) => state.loginWithEmail)
+  const signupWithEmail = useAuthStore((state) => state.signupWithEmail)
+  const isAuthenticated = useAuthStore(selectIsAuthenticated)
   const toggleWishlist = useCartStore((s) => s.toggleWishlist)
   const wishlist = useCartStore((s) => s.wishlist)
 
@@ -49,7 +53,7 @@ export function LoginClient({ dict }: LoginClientProps) {
       if (wishlistAdd && !wishlist.includes(wishlistAdd)) {
         toggleWishlist(wishlistAdd)
       }
-      if (redirectUrl) router.push(redirectUrl)
+      if (redirectUrl?.startsWith(`/${locale}/`)) router.push(redirectUrl)
       else router.push(`/${locale}/account`)
     }
   }, [isAuthenticated, router, locale, redirectUrl, wishlistAdd, toggleWishlist, wishlist])
@@ -158,6 +162,7 @@ export function LoginClient({ dict }: LoginClientProps) {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-2 p-3 mb-6 bg-red-50 text-red-700 rounded-xl text-sm"
+          role="alert"
         >
           <AlertCircle size={18} />
           {error}
@@ -173,8 +178,9 @@ export function LoginClient({ dict }: LoginClientProps) {
             className="space-y-4"
           >
             <div className="space-y-1">
-              <label className="text-sm font-medium text-brand-text">{dict.auth.phoneLabel}</label>
+              <label htmlFor="login-phone" className="text-sm font-medium text-brand-text">{dict.auth.phoneLabel}</label>
               <input 
+                id="login-phone"
                 type="tel" 
                 dir="ltr"
                 value={phone}
@@ -182,6 +188,7 @@ export function LoginClient({ dict }: LoginClientProps) {
                 placeholder={dict.auth.phonePlaceholder}
                 className="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all text-left"
                 required
+                autoComplete="tel"
               />
             </div>
             <button 
@@ -205,13 +212,15 @@ export function LoginClient({ dict }: LoginClientProps) {
             onSubmit={handleOtpSubmit} 
             className="space-y-6"
           >
-            <div className="flex justify-center gap-2" dir="ltr">
+            <div className="flex justify-center gap-2" dir="ltr" role="group" aria-label={dict.auth.otpPlaceholder}>
               {otp.map((digit, idx) => (
                 <input
                   key={idx}
                   ref={el => { otpRefs.current[idx] = el }}
                   type="text"
                   inputMode="numeric"
+                  autoComplete={idx === 0 ? 'one-time-code' : 'off'}
+                  aria-label={`${dict.auth.otpPlaceholder} ${idx + 1}`}
                   maxLength={1}
                   value={digit}
                   onChange={e => handleOtpChange(idx, e.target.value)}
@@ -229,7 +238,7 @@ export function LoginClient({ dict }: LoginClientProps) {
             </button>
             <div className="text-center mt-4 pt-4 border-t border-brand-border">
               <button type="button" onClick={() => setMode('phone')} className="text-sm text-brand-muted hover:text-brand-text transition-colors">
-                {locale === 'fa' ? 'تغییر شماره' : 'Change Phone'}
+                {dict.auth.changePhone}
               </button>
             </div>
           </motion.form>
@@ -243,8 +252,9 @@ export function LoginClient({ dict }: LoginClientProps) {
             className="space-y-4"
           >
             <div className="space-y-1">
-              <label className="text-sm font-medium text-brand-text">{dict.auth.emailLabel}</label>
+              <label htmlFor="login-email" className="text-sm font-medium text-brand-text">{dict.auth.emailLabel}</label>
               <input 
+                id="login-email"
                 type="email" 
                 dir="ltr"
                 value={email}
@@ -252,29 +262,34 @@ export function LoginClient({ dict }: LoginClientProps) {
                 placeholder={dict.auth.emailPlaceholder}
                 className="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all text-left"
                 required
+                autoComplete="email"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-sm font-medium text-brand-text">{dict.auth.passwordLabel}</label>
+              <label htmlFor="login-password" className="text-sm font-medium text-brand-text">{dict.auth.passwordLabel}</label>
               <input 
+                id="login-password"
                 type="password" 
                 dir="ltr"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all text-left"
                 required
+                autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
               />
             </div>
             {mode === 'signup' && (
               <div className="space-y-1">
-                <label className="text-sm font-medium text-brand-text">{dict.auth.confirmPasswordLabel}</label>
+                <label htmlFor="confirm-password" className="text-sm font-medium text-brand-text">{dict.auth.confirmPasswordLabel}</label>
                 <input 
+                  id="confirm-password"
                   type="password" 
                   dir="ltr"
                   value={confirmPassword}
                   onChange={e => setConfirmPassword(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border border-brand-border focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all text-left"
                   required
+                  autoComplete="new-password"
                 />
               </div>
             )}

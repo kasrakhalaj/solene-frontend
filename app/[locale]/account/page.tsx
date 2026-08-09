@@ -1,5 +1,15 @@
 import { getDictionary } from '@/app/[locale]/dictionaries'
 import { AccountClient } from './AccountClient'
+import type { Metadata } from 'next'
+import { localeAlternates } from '@/lib/metadata'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const dict = await getDictionary()
+  return {
+    ...dict.metadata.account,
+    alternates: localeAlternates('/account'),
+  }
+}
 
 export default async function AccountPage() {
   const dict = await getDictionary()

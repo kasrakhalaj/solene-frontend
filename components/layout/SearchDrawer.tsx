@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
@@ -11,6 +10,7 @@ import { searchService, type SearchResult } from '@/lib/searchService'
 import { useLocale } from '@/app/[locale]/providers'
 import { formatPrice } from '@/lib/utils'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
+import { useDialogA11y } from '@/components/ui/useDialogA11y'
 
 interface SearchDrawerProps {
   dict: Dictionary
@@ -30,12 +30,12 @@ export function SearchDrawer({ dict, isOpen, onClose }: SearchDrawerProps) {
   
   const inputRef = useRef<HTMLInputElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
-  const triggerRef = useRef<HTMLElement | null>(null)
 
   // 1. Fetch results from abstract service
   const results = useMemo<SearchResult[]>(() => {
     return searchService.search(query, locale)
   }, [query, locale])
+  const visibleResults = useMemo(() => results.slice(0, 5), [results])
 
   // 2. Fetch featured products for zero-state
   const featured = useMemo(() => {
@@ -58,43 +58,29 @@ export function SearchDrawer({ dict, isOpen, onClose }: SearchDrawerProps) {
     handleClose()
   }, [router, locale, handleClose])
 
-  // Lock body scroll and manage focus on open/close
-  useEffect(() => {
-    if (isOpen) {
-      triggerRef.current = document.activeElement as HTMLElement
-      document.body.style.overflow = 'hidden'
-      const t = setTimeout(() => inputRef.current?.focus(), 100)
-      return () => clearTimeout(t)
-    } else {
-      document.body.style.overflow = ''
-      triggerRef.current?.focus()
-    }
-    return () => { document.body.style.overflow = '' }
-  }, [isOpen])
+  useDialogA11y({
+    isOpen,
+    onClose: handleClose,
+    containerRef: panelRef,
+    initialFocusRef: inputRef,
+  })
 
   // Keyboard navigation & Esc handler
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { 
-        handleClose()
-        return 
-      }
-      
-      const isInputFocused = document.activeElement === inputRef.current
-
       // Navigate results if we have them
-      if (results.length > 0) {
+      if (visibleResults.length > 0) {
         if (e.key === 'ArrowDown') {
           e.preventDefault()
-          setActiveIndex(prev => (prev < results.length - 1 ? prev + 1 : prev))
+          setActiveIndex(prev => (prev < visibleResults.length - 1 ? prev + 1 : prev))
         } else if (e.key === 'ArrowUp') {
           e.preventDefault()
           setActiveIndex(prev => (prev > -1 ? prev - 1 : -1))
         } else if (e.key === 'Enter') {
           e.preventDefault()
-          if (activeIndex >= 0 && activeIndex < results.length) {
+          if (activeIndex >= 0 && activeIndex < visibleResults.length) {
             // Navigate to specific product
-            const p = results[activeIndex].product
+            const p = visibleResults[activeIndex].product
             router.push(`/${locale}/products/${p.slug}`)
             handleClose()
           } else {
@@ -111,7 +97,7 @@ export function SearchDrawer({ dict, isOpen, onClose }: SearchDrawerProps) {
       // The PRD mentions populating suggestions, but we are skipping complex 
       // autocomplete suggestions (text-only) in favor of the direct product list.
     },
-    [handleClose, results, activeIndex, router, locale, query, submitSearch],
+    [handleClose, visibleResults, activeIndex, router, locale, query, submitSearch],
   )
 
   useEffect(() => {
@@ -119,12 +105,6 @@ export function SearchDrawer({ dict, isOpen, onClose }: SearchDrawerProps) {
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, handleKeyDown])
-
-  // Reset active index when query changes
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setActiveIndex(-1)
-  }, [query])
 
   return (
     <AnimatePresence>
@@ -146,7 +126,7 @@ export function SearchDrawer({ dict, isOpen, onClose }: SearchDrawerProps) {
             ref={panelRef}
             role="dialog"
             aria-modal="true"
-            aria-label={(dict.search as any)?.placeholder || dict.nav.searchPlaceholder}
+            aria-label={dict.search.placeholder}
             className="fixed top-0 inset-x-0 z-[var(--z-drawer)] bg-brand-surface shadow-2xl h-[100dvh] md:h-auto md:max-h-[85vh] flex flex-col"
             initial={{ y: '-100%' }}
             animate={{ y: 0 }}
@@ -160,8 +140,11 @@ export function SearchDrawer({ dict, isOpen, onClose }: SearchDrawerProps) {
                 ref={inputRef}
                 type="search"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={(dict.search as any)?.placeholder || dict.nav.searchPlaceholder}
+                onChange={(e) => {
+                  setQuery(e.target.value)
+                  setActiveIndex(-1)
+                }}
+                placeholder={dict.search.placeholder}
                 className="flex-1 bg-transparent outline-none text-brand-text placeholder:text-brand-muted text-lg md:text-xl"
                 autoComplete="off"
                 role="combobox"
@@ -175,7 +158,7 @@ export function SearchDrawer({ dict, isOpen, onClose }: SearchDrawerProps) {
                 <button
                   onClick={() => { setQuery(''); inputRef.current?.focus() }}
                   className="flex items-center justify-center p-2 rounded-full hover:bg-brand-cream text-brand-muted hover:text-brand-text transition-colors shrink-0"
-                  aria-label={(dict.search as any)?.clear || "Clear search"}
+                  aria-label={dict.search.clear}
                 >
                   <X size={18} />
                 </button>
@@ -185,7 +168,7 @@ export function SearchDrawer({ dict, isOpen, onClose }: SearchDrawerProps) {
               <button
                 onClick={handleClose}
                 className="flex items-center justify-center w-11 h-11 rounded-full hover:bg-brand-cream transition-colors shrink-0 ms-2"
-                aria-label={(dict.search as any)?.close || dict.nav.close}
+                aria-label={dict.search.close}
               >
                 {isRtl ? <ArrowRight size={22} className="md:hidden" /> : <ArrowLeft size={22} className="md:hidden" />}
                 <X size={24} className="hidden md:block" />
@@ -201,7 +184,7 @@ export function SearchDrawer({ dict, isOpen, onClose }: SearchDrawerProps) {
                   {/* Trending */}
                   <section>
                     <h3 className="text-xs font-semibold tracking-wider text-brand-muted uppercase mb-4">
-                      {(dict.search as any)?.trending || 'TRENDING'}
+                      {dict.search.trending}
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {trending.map((term) => (
@@ -219,7 +202,7 @@ export function SearchDrawer({ dict, isOpen, onClose }: SearchDrawerProps) {
                   {/* Popular / Featured */}
                   <section>
                     <h3 className="text-xs font-semibold tracking-wider text-brand-muted uppercase mb-4">
-                      {(dict.search as any)?.popular || 'POPULAR'}
+                      {dict.search.popular}
                     </h3>
                     <div className="flex flex-col gap-4">
                       {featured.map((product) => {
@@ -258,15 +241,15 @@ export function SearchDrawer({ dict, isOpen, onClose }: SearchDrawerProps) {
                   {results.length === 0 ? (
                     <div className="text-center py-16 flex flex-col items-center gap-2">
                       <p className="text-xl font-medium text-brand-text">
-                        {(dict.search as any)?.noResults?.title || 'Nothing matched your search'}
+                        {dict.search.noResults.title}
                       </p>
                       <p className="text-brand-muted">
-                        {(dict.search as any)?.noResults?.description || 'Try a shorter or different search term.'}
+                        {dict.search.noResults.description}
                       </p>
                     </div>
                   ) : (
                     <ul role="listbox" id="search-results-listbox" className="flex flex-col gap-2">
-                      {results.slice(0, 5).map(({ product }, idx) => {
+                      {visibleResults.map(({ product }, idx) => {
                         const title = locale === 'fa' ? product.title_fa : product.title_en
                         const isActive = idx === activeIndex
                         return (
@@ -300,7 +283,7 @@ export function SearchDrawer({ dict, isOpen, onClose }: SearchDrawerProps) {
                             onClick={() => submitSearch(query)}
                             className="w-full text-center py-3 text-sm font-medium text-brand-text hover:text-brand-gold transition-colors flex items-center justify-center gap-2"
                           >
-                            {(dict.search as any)?.viewAll || 'View all results →'}
+                            {dict.search.viewAll}
                             {!isRtl && <ArrowRight size={16} />}
                             {isRtl && <ArrowLeft size={16} />}
                           </button>

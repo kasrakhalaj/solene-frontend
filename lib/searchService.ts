@@ -1,4 +1,6 @@
-import { products, type Product } from './mockData'
+import { products } from './mockData'
+import type { Product } from './product'
+import type { SupportedLocale } from './siteConfig'
 
 export interface SearchResult {
   product: Product
@@ -9,7 +11,7 @@ export interface SearchService {
   /**
    * Search for products based on a query string and locale.
    */
-  search(query: string, locale: 'en' | 'fa'): SearchResult[]
+  search(query: string, locale: SupportedLocale): SearchResult[]
   
   /**
    * Get a curated list of featured/popular products for the zero-state discovery.
@@ -35,7 +37,7 @@ function normalizeText(text: string): string {
 // ─── Mock Implementation ─────────────────────────────────────────────────────
 
 class MockSearchServiceImpl implements SearchService {
-  search(query: string, locale: 'en' | 'fa'): SearchResult[] {
+  search(query: string, locale: SupportedLocale): SearchResult[] {
     const q = normalizeText(query)
     if (!q) return []
 
@@ -72,6 +74,6 @@ class MockSearchServiceImpl implements SearchService {
   }
 }
 
-// Export a singleton instance. 
-// When the real Go backend is ready, this export will be swapped with ApiSearchServiceImpl.
+// Frontend-only adapter. A remote Go implementation will require an asynchronous
+// contract plus loading, cancellation, and transport-error handling in consumers.
 export const searchService: SearchService = new MockSearchServiceImpl()

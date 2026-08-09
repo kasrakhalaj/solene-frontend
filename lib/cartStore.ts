@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { Product } from './mockData'
+import type { Product } from './product'
 
 // ─── Cart types ──────────────────────────────────────────────────────────────
 

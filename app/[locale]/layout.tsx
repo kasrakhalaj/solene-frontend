@@ -43,12 +43,6 @@ export async function generateMetadata(): Promise<Metadata> {
     title: dict.metadata.home.title,
     description: dict.metadata.home.description,
     metadataBase: new URL('https://solene.store'),
-    alternates: {
-      languages: {
-        fa: '/fa',
-        en: '/en',
-      },
-    },
   }
 }
 

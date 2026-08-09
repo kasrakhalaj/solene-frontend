@@ -1,15 +1,17 @@
 import { getDictionary } from '@/app/[locale]/dictionaries'
 import Image from 'next/image'
+import type { Metadata } from 'next'
+import { localeAlternates } from '@/lib/metadata'
 
-interface AboutPageProps {
-  params: Promise<{
-    locale: string
-  }>
+export async function generateMetadata(): Promise<Metadata> {
+  const dict = await getDictionary()
+  return {
+    ...dict.metadata.about,
+    alternates: localeAlternates('/about'),
+  }
 }
 
-export default async function AboutPage(props: AboutPageProps) {
-  const params = await props.params;
-  const locale = params.locale as 'en' | 'fa';
+export default async function AboutPage() {
   const dict = await getDictionary()
 
   return (
@@ -38,11 +40,7 @@ export default async function AboutPage(props: AboutPageProps) {
           <p>
             {dict.home.brandStoryText}
           </p>
-          <p>
-            {locale === 'fa' 
-              ? 'تیم سولن با افتخار تلاش می‌کند تا زیباترین طراحی‌های روز دنیا را با قیمتی مناسب و کیفیتی ماندگار در اختیار شما قرار دهد. محصولات ما برای استفاده مداوم طراحی شده‌اند تا بدون نگرانی از تغییر رنگ یا حساسیت، در تمام لحظات همراه شما باشند.'
-              : 'The Solene team proudly strives to bring you the most beautiful, contemporary designs at an affordable price with lasting quality. Our products are designed for continuous wear, ensuring they remain by your side in every moment without the worry of tarnishing or skin irritation.'}
-          </p>
+          <p>{dict.about.storyContinuation}</p>
         </div>
       </div>
     </main>

@@ -1,5 +1,15 @@
 import { getDictionary } from '@/app/[locale]/dictionaries'
 import { WishlistClient } from './WishlistClient'
+import type { Metadata } from 'next'
+import { localeAlternates } from '@/lib/metadata'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const dict = await getDictionary()
+  return {
+    ...dict.metadata.wishlist,
+    alternates: localeAlternates('/wishlist'),
+  }
+}
 
 export default async function WishlistPage() {
   const dict = await getDictionary()

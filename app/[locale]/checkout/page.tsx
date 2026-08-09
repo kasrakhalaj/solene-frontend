@@ -1,7 +1,15 @@
 import { getDictionary } from '@/app/[locale]/dictionaries'
 import { CheckoutClient } from './CheckoutClient'
+import type { Metadata } from 'next'
+import { localeAlternates } from '@/lib/metadata'
 
-
+export async function generateMetadata(): Promise<Metadata> {
+  const dict = await getDictionary()
+  return {
+    ...dict.metadata.checkout,
+    alternates: localeAlternates('/checkout'),
+  }
+}
 
 export default async function CheckoutPage() {
   const dict = await getDictionary()

@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { Product } from '@/lib/mockData'
+import { useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import type { Product } from '@/lib/product'
 import { ProductCard } from '@/components/ui/ProductCard'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
 import { SlidersHorizontal, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { cn } from '@/lib/utils'
+import { useDialogA11y } from '@/components/ui/useDialogA11y'
 
 interface CollectionClientProps {
   initialProducts: Product[]
@@ -16,11 +17,35 @@ interface CollectionClientProps {
 type SortOption = 'featured' | 'price-asc' | 'price-desc' | 'newest'
 type FinishFilter = 'all' | 'silver-steel' | 'gold-steel'
 
+const DESKTOP_QUERY = '(min-width: 1024px)'
+
+function subscribeToDesktopQuery(callback: () => void): () => void {
+  const media = window.matchMedia(DESKTOP_QUERY)
+  media.addEventListener('change', callback)
+  return () => media.removeEventListener('change', callback)
+}
+
+function getDesktopSnapshot(): boolean {
+  return window.matchMedia(DESKTOP_QUERY).matches
+}
+
 export function CollectionClient({ initialProducts, dict }: CollectionClientProps) {
   const [sort, setSort] = useState<SortOption>('featured')
   const [finishFilter, setFinishFilter] = useState<FinishFilter>('all')
   const [inStockOnly, setInStockOnly] = useState(false)
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false)
+  const filterPanelRef = useRef<HTMLElement>(null)
+  const isDesktop = useSyncExternalStore(
+    subscribeToDesktopQuery,
+    getDesktopSnapshot,
+    () => false,
+  )
+
+  useDialogA11y({
+    isOpen: isMobileFilterOpen && !isDesktop,
+    onClose: () => setIsMobileFilterOpen(false),
+    containerRef: filterPanelRef,
+  })
 
   const filteredAndSorted = useMemo(() => {
     let result = [...initialProducts]
@@ -57,11 +82,13 @@ export function CollectionClient({ initialProducts, dict }: CollectionClientProp
       {/* Mobile Filter Toggle */}
       <div className="lg:hidden flex items-center justify-between py-4 border-b border-brand-border">
         <span className="text-sm font-medium text-brand-muted">
-          {filteredAndSorted.length} {dict.product.relatedProducts.split(' ')[0]} {/* Simple count fallback */}
+          {dict.product.productCount.replace('{count}', String(filteredAndSorted.length))}
         </span>
         <button
           onClick={() => setIsMobileFilterOpen(true)}
           className="flex items-center gap-2 text-sm font-medium text-brand-text"
+          aria-expanded={isMobileFilterOpen}
+          aria-controls="collection-filters"
         >
           <SlidersHorizontal size={16} />
           {dict.product.filterBy}
@@ -69,13 +96,20 @@ export function CollectionClient({ initialProducts, dict }: CollectionClientProp
       </div>
 
       {/* Filters Sidebar */}
-      <aside className={cn(
-        "fixed inset-0 z-[var(--z-drawer)] bg-brand-surface lg:static lg:block lg:w-64 lg:bg-transparent transition-transform duration-300 lg:translate-x-0 lg:z-auto flex flex-col",
-        isMobileFilterOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
+      <aside
+        ref={filterPanelRef}
+        id="collection-filters"
+        role={isDesktop ? undefined : 'dialog'}
+        aria-modal={isDesktop ? undefined : 'true'}
+        aria-label={dict.product.filterBy}
+        inert={!isDesktop && !isMobileFilterOpen ? true : undefined}
+        className={cn(
+        "fixed inset-0 z-[var(--z-drawer)] bg-brand-surface lg:static lg:w-64 lg:bg-transparent lg:translate-x-0 lg:z-auto flex-col",
+        isMobileFilterOpen ? "flex translate-x-0" : "hidden translate-x-full lg:flex lg:translate-x-0"
       )}>
         <div className="flex items-center justify-between p-6 border-b border-brand-border lg:hidden">
           <h2 className="text-lg font-semibold text-brand-text">{dict.product.filterBy}</h2>
-          <button onClick={() => setIsMobileFilterOpen(false)} className="p-2">
+          <button onClick={() => setIsMobileFilterOpen(false)} className="p-2" aria-label={dict.nav.close}>
             <X size={20} />
           </button>
         </div>

@@ -25,7 +25,7 @@ export function Providers({ children, locale, dict }: ProvidersProps & { dict: D
     <LocaleProvider locale={locale}>
       <WishlistProvider dict={dict}>
         {children}
-        <ToastProvider />
+        <ToastProvider dict={dict} />
       </WishlistProvider>
     </LocaleProvider>
   )

@@ -85,7 +85,7 @@ export function Footer({ dict }: FooterProps) {
           <ul className="space-y-3">
             {[
               { label: dict.nav.home, href: `/${locale}` },
-              { label: dict.nav.collections, href: `/${locale}/collections` },
+              { label: dict.nav.collections, href: `/${locale}#collections` },
               { label: dict.nav.rings, href: `/${locale}/collections/rings` },
               { label: dict.nav.necklaces, href: `/${locale}/collections/necklaces` },
               { label: dict.nav.earrings, href: `/${locale}/collections/earrings` },

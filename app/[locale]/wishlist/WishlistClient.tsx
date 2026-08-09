@@ -1,8 +1,8 @@
 'use client'
 
 import { useStore } from '@/lib/cartStore'
-import { useAuthStore } from '@/lib/authStore'
-import { products } from '@/lib/mockData'
+import { selectIsAuthenticated, useAuthStore } from '@/lib/authStore'
+import { catalogService } from '@/lib/catalogService'
 import { ProductCard } from '@/components/ui/ProductCard'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
 import { useLocale } from '@/app/[locale]/providers'
@@ -14,15 +14,14 @@ interface WishlistClientProps {
 
 export function WishlistClient({ dict }: WishlistClientProps) {
   const locale = useLocale()
-  const { isAuthenticated, _hasHydrated } = useAuthStore()
+  const isAuthenticated = useAuthStore(selectIsAuthenticated)
+  const hasHydrated = useAuthStore((state) => state._hasHydrated)
   const wishlistIds = useStore((s) => s.wishlist)
   
   // Find the actual product objects for the IDs in the wishlist
-  const wishlistedProducts = wishlistIds
-    .map(id => products.find(p => p.id === id))
-    .filter((p): p is NonNullable<typeof p> => p !== undefined)
+  const wishlistedProducts = catalogService.getByIds(wishlistIds)
 
-  if (!_hasHydrated) return null
+  if (!hasHydrated) return null
 
   if (!isAuthenticated) {
     return (
@@ -44,16 +43,16 @@ export function WishlistClient({ dict }: WishlistClientProps) {
           </svg>
         </div>
         <h2 className="text-2xl font-medium text-brand-text mb-4">
-          {dict.wishlistModal?.title || (locale === 'fa' ? 'علاقه‌مندی‌های خود را ذخیره کنید' : 'Save your favorites')}
+          {dict.wishlistModal.title}
         </h2>
         <p className="text-brand-muted mb-8">
-          {dict.wishlistModal?.description || (locale === 'fa' ? 'برای ذخیره قطعات مورد علاقه در حساب کاربری خود، وارد شوید.' : 'Log in to keep your favorite pieces saved to your account.')}
+          {dict.wishlistModal.description}
         </p>
         <Link
           href={`/${locale}/login?redirect=/${locale}/wishlist`}
           className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-brand-text text-brand-surface font-medium hover:opacity-90 transition-opacity"
         >
-          {dict.wishlistModal?.login || (locale === 'fa' ? 'ورود به حساب' : 'Log in')}
+          {dict.wishlistModal.login}
         </Link>
       </div>
     )

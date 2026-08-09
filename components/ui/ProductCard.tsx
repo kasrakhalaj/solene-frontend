@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Heart, ShoppingBag, Check } from 'lucide-react'
 import { cn, formatPrice } from '@/lib/utils'
-import { Product } from '@/lib/mockData'
+import type { Product } from '@/lib/product'
 import { useStore as useCartStore } from '@/lib/cartStore'
 import { useWishlistAction } from '@/components/providers/WishlistProvider'
 import { useLocale } from '@/app/[locale]/providers'
@@ -21,6 +22,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product, dict, priority = false }: ProductCardProps) {
   const locale = useLocale()
+  const router = useRouter()
   const isRtl = locale === 'fa'
   const title = isRtl ? product.title_fa : product.title_en
   
@@ -35,15 +37,22 @@ export function ProductCard({ product, dict, priority = false }: ProductCardProp
   const openCart = useCartStore((s) => s.openCart)
   const addToast = useToastStore((s) => s.addToast)
   const [isAdded, setIsAdded] = useState(false)
+  const addedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => () => {
+    if (addedTimerRef.current) clearTimeout(addedTimerRef.current)
+  }, [])
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault()
     if (!product.inStock) return
-    
-    // For single-size products, add immediately. For multi-size, we should redirect to PDP,
-    // but for the quick add demo, we'll just add the first size.
-    const size = product.sizes.length > 0 ? product.sizes[0] : ''
-    addToCart(product, size, 1)
+
+    if (product.sizes.length > 0) {
+      router.push(`/${locale}/products/${product.slug}`)
+      return
+    }
+
+    addToCart(product, '', 1)
     
     setIsAdded(true)
     
@@ -56,7 +65,8 @@ export function ProductCard({ product, dict, priority = false }: ProductCardProp
       }
     })
     
-    setTimeout(() => setIsAdded(false), 2000)
+    if (addedTimerRef.current) clearTimeout(addedTimerRef.current)
+    addedTimerRef.current = setTimeout(() => setIsAdded(false), 2000)
   }
 
   const handleWishlist = (e: React.MouseEvent) => {
@@ -65,38 +75,72 @@ export function ProductCard({ product, dict, priority = false }: ProductCardProp
   }
 
   return (
-    <Link 
-      href={`/${locale}/products/${product.slug}`}
+    <article
       className="group block"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Image container */}
       <div className="relative aspect-[4/5] bg-brand-cream rounded-2xl overflow-hidden mb-3">
-        {/* Badges */}
-        <div className="absolute top-3 start-3 z-10 flex flex-col gap-1.5">
-          {product.isNew && (
-            <span className="bg-brand-gold text-white text-[10px] font-bold px-2 py-1 rounded-full leading-none">
-              {dict.product.new}
-            </span>
+        <Link
+          href={`/${locale}/products/${product.slug}`}
+          aria-label={title}
+          className="absolute inset-0"
+        >
+          {/* Badges */}
+          <div className="absolute top-3 start-3 z-10 flex flex-col gap-1.5">
+            {product.isNew && (
+              <span className="bg-brand-gold text-white text-[10px] font-bold px-2 py-1 rounded-full leading-none">
+                {dict.product.new}
+              </span>
+            )}
+            {product.isBestSeller && (
+              <span className="bg-brand-text text-brand-surface text-[10px] font-bold px-2 py-1 rounded-full leading-none">
+                {dict.product.bestSeller}
+              </span>
+            )}
+            {!product.inStock && (
+              <span className="bg-red-50 text-red-600 text-[10px] font-bold px-2 py-1 rounded-full leading-none">
+                {dict.product.outOfStock}
+              </span>
+            )}
+          </div>
+
+          {/* Primary Image */}
+          <Image
+            src={product.images[0]}
+            alt={title}
+            fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            className={cn(
+              "object-cover transition-all duration-700 ease-out",
+              isHovered && product.images[1] ? "opacity-0 scale-105" : "opacity-100 scale-100",
+              !isImageLoaded && "opacity-0"
+            )}
+            priority={priority}
+            onLoad={() => setIsImageLoaded(true)}
+          />
+          {product.images[1] && (
+            <Image
+              src={product.images[1]}
+              alt={`${title} — ${dict.product.alternateView}`}
+              fill
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+              className={cn(
+                "object-cover transition-all duration-700 ease-out",
+                isHovered ? "opacity-100 scale-100" : "opacity-0 scale-105",
+                !isImageLoaded && "opacity-0"
+              )}
+              priority={priority}
+            />
           )}
-          {product.isBestSeller && (
-            <span className="bg-brand-text text-brand-surface text-[10px] font-bold px-2 py-1 rounded-full leading-none">
-              {dict.product.bestSeller}
-            </span>
-          )}
-          {!product.inStock && (
-            <span className="bg-red-50 text-red-600 text-[10px] font-bold px-2 py-1 rounded-full leading-none">
-              {dict.product.outOfStock}
-            </span>
-          )}
-        </div>
+        </Link>
 
         {/* Wishlist Button */}
         <button
           onClick={handleWishlist}
           className="absolute top-3 end-3 z-10 p-2 rounded-full bg-white/80 backdrop-blur-md text-brand-text hover:bg-white transition-colors"
-          aria-label={dict.nav.wishlist}
+          aria-label={isWishlisted ? dict.product.removeFromWishlist : dict.product.addToWishlist}
         >
           <Heart 
             size={16} 
@@ -104,38 +148,9 @@ export function ProductCard({ product, dict, priority = false }: ProductCardProp
           />
         </button>
 
-        {/* Primary Image */}
-        <Image
-          src={product.images[0]}
-          alt={title}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className={cn(
-            "object-cover transition-all duration-700 ease-out",
-            isHovered && product.images[1] ? "opacity-0 scale-105" : "opacity-100 scale-100",
-            !isImageLoaded && "opacity-0"
-          )}
-          priority={priority}
-          onLoad={() => setIsImageLoaded(true)}
-        />
-        {product.images[1] && (
-          <Image
-            src={product.images[1]}
-            alt={`${title} alternate view`}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className={cn(
-              "object-cover transition-all duration-700 ease-out",
-              isHovered ? "opacity-100 scale-100" : "opacity-0 scale-105",
-              !isImageLoaded && "opacity-0"
-            )}
-            priority={priority}
-          />
-        )}
-        
         {/* Quick Add overlay */}
         <div className={cn(
-          "absolute bottom-0 inset-x-0 p-3 transition-transform duration-300",
+          "absolute z-10 bottom-0 inset-x-0 p-3 transition-transform duration-300 group-focus-within:translate-y-0",
           isHovered ? "translate-y-0" : "translate-y-full"
         )}>
           <button
@@ -173,7 +188,7 @@ export function ProductCard({ product, dict, priority = false }: ProductCardProp
       </div>
 
       {/* Product Info */}
-      <div className="space-y-1">
+      <Link href={`/${locale}/products/${product.slug}`} className="block space-y-1">
         <h3 className="text-sm font-medium text-brand-text truncate">
           {title}
         </h3>
@@ -187,7 +202,7 @@ export function ProductCard({ product, dict, priority = false }: ProductCardProp
             </span>
           )}
         </div>
-      </div>
-    </Link>
+      </Link>
+    </article>
   )
 }

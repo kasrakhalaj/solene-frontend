@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
-import { Product, getProductsByCategory } from '@/lib/mockData'
+import type { Product } from '@/lib/product'
 import { ZoomableGallery } from '@/components/ui/ZoomableGallery'
 import { TrustBadgeRow } from '@/components/ui/TrustBadgeRow'
 import { SizeGuideModal } from '@/components/ui/SizeGuideModal'
@@ -18,10 +18,11 @@ import { useLocale } from '@/app/[locale]/providers'
 
 interface ProductClientProps {
   product: Product
+  relatedProducts: Product[]
   dict: Dictionary
 }
 
-export function ProductClient({ product, dict }: ProductClientProps) {
+export function ProductClient({ product, relatedProducts, dict }: ProductClientProps) {
   const locale = useLocale()
   const isRtl = locale === 'fa'
   const title = isRtl ? product.title_fa : product.title_en
@@ -32,6 +33,7 @@ export function ProductClient({ product, dict }: ProductClientProps) {
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false)
   
   const [isAdded, setIsAdded] = useState(false)
+  const addedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const addToCartRef = useRef<HTMLButtonElement>(null)
   const isAddToCartInView = useInView(addToCartRef)
   
@@ -40,6 +42,10 @@ export function ProductClient({ product, dict }: ProductClientProps) {
   const isWishlisted = useCartStore(s => s.wishlist.includes(product.id))
   const openCart = useCartStore(s => s.openCart)
   const addToast = useToastStore(s => s.addToast)
+
+  useEffect(() => () => {
+    if (addedTimerRef.current) clearTimeout(addedTimerRef.current)
+  }, [])
 
   const handleAddToCart = () => {
     if (!product.inStock) return
@@ -57,22 +63,18 @@ export function ProductClient({ product, dict }: ProductClientProps) {
       }
     })
 
-    setTimeout(() => {
+    if (addedTimerRef.current) clearTimeout(addedTimerRef.current)
+    addedTimerRef.current = setTimeout(() => {
       setIsAdded(false)
     }, 1500)
   }
-
-  // Cross sell
-  const relatedProducts = getProductsByCategory(product.category)
-    .filter(p => p.id !== product.id)
-    .slice(0, 4)
 
   return (
     <div className="max-w-7xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 mb-24">
         {/* Left: Gallery */}
         <div className="w-full">
-          <ZoomableGallery images={product.images} title={title} />
+          <ZoomableGallery images={product.images} title={title} dict={dict} />
         </div>
 
         {/* Right: Info */}
@@ -130,6 +132,7 @@ export function ProductClient({ product, dict }: ProductClientProps) {
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
+                    aria-pressed={selectedSize === size}
                     className={cn(
                       "min-w-12 h-12 px-4 rounded-full border text-sm font-medium transition-all",
                       selectedSize === size 
@@ -150,6 +153,7 @@ export function ProductClient({ product, dict }: ProductClientProps) {
               <button 
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 className="w-12 h-full flex items-center justify-center text-brand-muted hover:text-brand-text"
+                aria-label={dict.product.decreaseQuantity}
               >
                 <Minus size={16} />
               </button>
@@ -157,6 +161,7 @@ export function ProductClient({ product, dict }: ProductClientProps) {
               <button 
                 onClick={() => setQuantity(quantity + 1)}
                 className="w-12 h-full flex items-center justify-center text-brand-muted hover:text-brand-text"
+                aria-label={dict.product.increaseQuantity}
               >
                 <Plus size={16} />
               </button>
@@ -198,6 +203,7 @@ export function ProductClient({ product, dict }: ProductClientProps) {
             <button
               onClick={() => handleWishlistAction(product.id)}
               className="w-14 h-14 rounded-full border border-brand-border flex items-center justify-center text-brand-text hover:bg-brand-cream transition-colors"
+              aria-label={isWishlisted ? dict.product.removeFromWishlist : dict.product.addToWishlist}
             >
               <Heart size={20} className={cn("transition-colors", isWishlisted && "fill-brand-gold text-brand-gold")} />
             </button>

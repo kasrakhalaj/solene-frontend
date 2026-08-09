@@ -2,10 +2,9 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { authService, type User } from './authService'
 
-interface AuthState {
+export interface AuthState {
   user: User | null
   token: string | null
-  isAuthenticated: boolean
   
   // Actions
   loginWithPhone: (phone: string) => Promise<void>
@@ -24,7 +23,6 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       token: null,
-      isAuthenticated: false,
       _hasHydrated: false,
 
       setHasHydrated: (state) => set({ _hasHydrated: state }),
@@ -38,7 +36,6 @@ export const useAuthStore = create<AuthState>()(
         set({ 
           user: session.user, 
           token: session.token,
-          isAuthenticated: true 
         })
       },
 
@@ -47,7 +44,6 @@ export const useAuthStore = create<AuthState>()(
         set({ 
           user: session.user, 
           token: session.token,
-          isAuthenticated: true 
         })
       },
 
@@ -56,7 +52,6 @@ export const useAuthStore = create<AuthState>()(
         set({ 
           user: session.user, 
           token: session.token,
-          isAuthenticated: true 
         })
       },
 
@@ -66,18 +61,17 @@ export const useAuthStore = create<AuthState>()(
           try {
             await authService.logout(token)
           } catch {
-            // If local storage is broken or empty, proceed with empty userrors
+            // Local logout must still complete if the mock session is unavailable.
           }
         }
-        set({ user: null, token: null, isAuthenticated: false })
+        set({ user: null, token: null })
       }
     }),
     {
       name: 'solene-auth',
       partialize: (state) => ({ 
         user: state.user, 
-        token: state.token, 
-        isAuthenticated: state.isAuthenticated 
+        token: state.token,
       }),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true)
@@ -85,3 +79,7 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 )
+
+/** Authentication is derived from the persisted session, never stored separately. */
+export const selectIsAuthenticated = (state: AuthState): boolean =>
+  Boolean(state.user && state.token)

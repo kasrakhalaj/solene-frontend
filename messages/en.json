@@ -55,6 +55,7 @@
   "home": {
     "heroTitle": "Shine in Every Moment",
     "heroSubtitle": "The new collection of steel accessories, designed for your everyday beauty.",
+    "heroImageAlt": "Solene steel jewelry collection",
     "explore": "Explore Collections",
     "brandStoryTitle": "The Solene Story",
     "brandStoryText": "At Solene, we believe beauty should be accessible to everyone. Our products are crafted from hypoallergenic, stainless steel to offer not just stunning brilliance, but the durability needed for daily wear. Our goal is to provide jewelry that complements your modern lifestyle and completes your look."
@@ -92,7 +93,23 @@
     "sortPriceAsc": "Price: Low to High",
     "sortPriceDesc": "Price: High to Low",
     "sortNewest": "Newest",
-    "filterBy": "Filter"
+    "filterBy": "Filter",
+    "productCount": "{count} products",
+    "decreaseQuantity": "Decrease quantity",
+    "increaseQuantity": "Increase quantity",
+    "addToWishlist": "Add to wishlist",
+    "removeFromWishlist": "Remove from wishlist",
+    "viewImage": "View image {index}",
+    "thumbnailAlt": "Thumbnail {index}",
+    "alternateView": "Alternate view",
+    "ringsSizeHeading": "Rings",
+    "ringSize": "Size (US)",
+    "ringDiameter": "Diameter (mm)",
+    "ringCircumference": "Circumference (mm)",
+    "necklacesSizeHeading": "Necklaces",
+    "necklace40": "40 cm (16\"): Choker length, sits at the base of the neck.",
+    "necklace45": "45 cm (18\"): Princess length, falls just below the collarbone.",
+    "necklace50": "50 cm (20\"): Matinee length, falls a few inches below the collarbone."
   },
   "cart": {
     "title": "Your Cart",
@@ -139,11 +156,13 @@
     "simulatePayment": "Simulate Payment",
     "processing": "Processing...",
     "paymentSuccess": "Payment Successful",
-    "paymentFailed": "Payment Failed"
+    "paymentFailed": "Payment Failed",
+    "cardTransferInstructions": "Transfer the total to the card number below, then upload your receipt:"
   },
   "about": {
     "title": "About Solene",
-    "subtitle": "Quality Steel Accessories"
+    "subtitle": "Quality Steel Accessories",
+    "storyContinuation": "The Solene team proudly strives to bring you the most beautiful, contemporary designs at an affordable price with lasting quality. Our products are designed for continuous wear, ensuring they remain by your side in every moment without the worry of tarnishing or skin irritation."
   },
   "footer": {
     "newsletter": "Newsletter",
@@ -173,6 +192,22 @@
     "checkout": {
       "title": "Checkout | Solene",
       "description": "Complete your purchase"
+    },
+    "search": {
+      "title": "Search | Solene",
+      "description": "Search the Solene steel accessories collection"
+    },
+    "login": {
+      "title": "Log In | Solene",
+      "description": "Log in to your Solene account"
+    },
+    "account": {
+      "title": "My Account | Solene",
+      "description": "View your Solene account"
+    },
+    "wishlist": {
+      "title": "Wishlist | Solene",
+      "description": "View your saved Solene pieces"
     }
   },
   "auth": {
@@ -197,6 +232,7 @@
     "resendOtp": "Resend Code",
     "resendCooldown": "Resend in {seconds}s",
     "continueAsGuest": "Continue as Guest",
+    "changePhone": "Change Phone",
     "errors": {
       "invalidPhone": "Please enter a valid mobile number.",
       "invalidOtp": "Incorrect code. Please try again.",
@@ -216,6 +252,7 @@
     "noOrders": "You haven't placed any orders yet.",
     "startShopping": "Start Shopping",
     "wishlist": "My Wishlist",
-    "logout": "Log Out"
+    "logout": "Log Out",
+    "ordersDescription": "Your orders will appear here once placed."
   }
 }

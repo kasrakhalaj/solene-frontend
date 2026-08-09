@@ -3,8 +3,9 @@
 import { useToastStore } from '@/lib/toastStore'
 import { motion, AnimatePresence } from 'motion/react'
 import { X } from 'lucide-react'
+import type { Dictionary } from '@/app/[locale]/dictionaries'
 
-export function ToastProvider() {
+export function ToastProvider({ dict }: { dict: Dictionary }) {
   const { toasts, removeToast } = useToastStore()
 
   return (
@@ -47,7 +48,7 @@ export function ToastProvider() {
             <button
               onClick={() => removeToast(toast.id)}
               className="shrink-0 p-1 rounded-full hover:bg-brand-surface/10 transition-colors text-brand-surface/70 hover:text-brand-surface"
-              aria-label="Close notification"
+              aria-label={dict.nav.close}
             >
               <X size={14} />
             </button>

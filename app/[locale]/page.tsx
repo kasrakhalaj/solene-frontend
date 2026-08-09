@@ -1,16 +1,29 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { getDictionary } from './dictionaries'
-import { getBestSellers, categories } from '../../lib/mockData'
+import { catalogService } from '@/lib/catalogService'
 import { ProductCard } from '@/components/ui/ProductCard'
 import { TrustBadgeRow } from '@/components/ui/TrustBadgeRow'
+import type { Metadata } from 'next'
+import { localeAlternates } from '@/lib/metadata'
+import type { SupportedLocale } from '@/lib/siteConfig'
 
-export default async function LocalePage(props: { params: Promise<{ locale: string }> }) {
+export async function generateMetadata(): Promise<Metadata> {
+  const dict = await getDictionary()
+  return {
+    title: dict.metadata.home.title,
+    description: dict.metadata.home.description,
+    alternates: localeAlternates(),
+  }
+}
+
+export default async function LocalePage(props: { params: Promise<{ locale: SupportedLocale }> }) {
   const params = await props.params;
-  const locale = params.locale as 'en' | 'fa';
+  const locale = params.locale
   const dict = await getDictionary()
   
-  const bestSellers = getBestSellers()
+  const bestSellers = catalogService.getBestSellers()
+  const categories = catalogService.getCategories()
 
   return (
     <main className="flex flex-col min-h-screen">
@@ -41,7 +54,7 @@ export default async function LocalePage(props: { params: Promise<{ locale: stri
           <div className="absolute inset-4 lg:inset-y-8 lg:inset-e-8 rounded-3xl overflow-hidden bg-brand-cream">
             <Image
               src="https://picsum.photos/seed/solenehero/1200/1600"
-              alt="Solene hero jewelry"
+              alt={dict.home.heroImageAlt}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
@@ -57,7 +70,7 @@ export default async function LocalePage(props: { params: Promise<{ locale: stri
       </section>
 
       {/* Featured Collections */}
-      <section className="py-16 px-6 lg:px-16">
+      <section id="collections" className="py-16 px-6 lg:px-16 scroll-mt-24">
         <div className="flex items-center justify-between mb-10">
           <h2 className="text-3xl font-semibold text-brand-text">{dict.nav.collections}</h2>
         </div>
@@ -70,7 +83,7 @@ export default async function LocalePage(props: { params: Promise<{ locale: stri
             >
               <Image
                 src={`https://picsum.photos/seed/solenecat${cat.key}/600/600`}
-                alt={dict.nav[cat.key as keyof typeof dict.nav]}
+                alt={dict.nav[cat.key]}
                 fill
                 sizes="(max-width: 768px) 50vw, 25vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -78,7 +91,7 @@ export default async function LocalePage(props: { params: Promise<{ locale: stri
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <h3 className="text-white text-xl font-medium tracking-wide">
-                  {dict.nav[cat.key as keyof typeof dict.nav]}
+                  {dict.nav[cat.key]}
                 </h3>
               </div>
             </Link>

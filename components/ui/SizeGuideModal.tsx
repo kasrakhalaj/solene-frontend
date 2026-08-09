@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
+import { useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { X } from 'lucide-react'
 import type { Dictionary } from '@/app/[locale]/dictionaries'
+import { useDialogA11y } from './useDialogA11y'
 
 
 interface SizeGuideModalProps {
@@ -13,56 +14,14 @@ interface SizeGuideModalProps {
 }
 
 export function SizeGuideModal({ isOpen, onClose, dict }: SizeGuideModalProps) {
-  const overlayRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
-  const triggerRef = useRef<HTMLElement | null>(null)
-
-  // Manage focus and scroll lock
-  useEffect(() => {
-    if (isOpen) {
-      triggerRef.current = document.activeElement as HTMLElement
-      document.body.style.overflow = 'hidden'
-      const t = setTimeout(() => {
-        modalRef.current?.querySelector<HTMLElement>('button')?.focus()
-      }, 100)
-      return () => clearTimeout(t)
-    } else {
-      document.body.style.overflow = ''
-      triggerRef.current?.focus()
-    }
-    return () => { document.body.style.overflow = '' }
-  }, [isOpen])
-
-  // Focus trap + Escape to close
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') { onClose(); return }
-    if (e.key !== 'Tab' || !modalRef.current) return
-    const focusable = modalRef.current.querySelectorAll<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    )
-    if (focusable.length === 0) return
-    const first = focusable[0]
-    const last = focusable[focusable.length - 1]
-    
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault(); last.focus()
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault(); first.focus()
-    }
-  }, [onClose])
-
-  useEffect(() => {
-    if (!isOpen) return
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, handleKeyDown])
+  useDialogA11y({ isOpen, onClose, containerRef: modalRef })
 
   return (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4 sm:p-6">
           <motion.div
-            ref={overlayRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -100,14 +59,14 @@ export function SizeGuideModal({ isOpen, onClose, dict }: SizeGuideModalProps) {
               <div className="space-y-8">
                 {/* Rings */}
                 <section>
-                  <h3 className="text-md font-medium mb-3 text-brand-gold">Rings / انگشتر</h3>
+                  <h3 className="text-md font-medium mb-3 text-brand-gold">{dict.product.ringsSizeHeading}</h3>
                   <div className="overflow-x-auto rounded-xl border border-brand-border">
                     <table className="w-full text-sm text-center">
                       <thead className="bg-brand-cream text-brand-text">
                         <tr>
-                          <th className="py-2 px-3 font-medium border-b border-e border-brand-border">Size (US)</th>
-                          <th className="py-2 px-3 font-medium border-b border-e border-brand-border">Diameter (mm)</th>
-                          <th className="py-2 px-3 font-medium border-b border-brand-border">Circumference (mm)</th>
+                          <th scope="col" className="py-2 px-3 font-medium border-b border-e border-brand-border">{dict.product.ringSize}</th>
+                          <th scope="col" className="py-2 px-3 font-medium border-b border-e border-brand-border">{dict.product.ringDiameter}</th>
+                          <th scope="col" className="py-2 px-3 font-medium border-b border-brand-border">{dict.product.ringCircumference}</th>
                         </tr>
                       </thead>
                       <tbody className="text-brand-muted">
@@ -133,11 +92,11 @@ export function SizeGuideModal({ isOpen, onClose, dict }: SizeGuideModalProps) {
 
                 {/* Necklaces */}
                 <section>
-                  <h3 className="text-md font-medium mb-3 text-brand-gold">Necklaces / گردنبند</h3>
+                  <h3 className="text-md font-medium mb-3 text-brand-gold">{dict.product.necklacesSizeHeading}</h3>
                   <div className="bg-brand-cream rounded-xl p-4 text-sm text-brand-muted space-y-2 text-justify">
-                    <p>40 cm (16&quot;): Choker length, sits at the base of the neck.</p>
-                    <p>45 cm (18&quot;): Princess length, falls just below the collarbone.</p>
-                    <p>50 cm (20&quot;): Matinee length, falls a few inches below the collarbone.</p>
+                    <p>{dict.product.necklace40}</p>
+                    <p>{dict.product.necklace45}</p>
+                    <p>{dict.product.necklace50}</p>
                   </div>
                 </section>
               </div>

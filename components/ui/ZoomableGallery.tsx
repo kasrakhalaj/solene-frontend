@@ -4,13 +4,15 @@ import { useState, useRef, MouseEvent } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'motion/react'
 import { cn } from '@/lib/utils'
+import type { Dictionary } from '@/app/[locale]/dictionaries'
 
 interface ZoomableGalleryProps {
   images: readonly string[]
   title: string
+  dict: Dictionary
 }
 
-export function ZoomableGallery({ images, title }: ZoomableGalleryProps) {
+export function ZoomableGallery({ images, title, dict }: ZoomableGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
   
@@ -84,12 +86,12 @@ export function ZoomableGallery({ images, title }: ZoomableGalleryProps) {
                 "relative aspect-square rounded-xl overflow-hidden bg-brand-cream transition-all",
                 activeIndex === idx ? "ring-2 ring-brand-gold ring-offset-2" : "opacity-60 hover:opacity-100"
               )}
-              aria-label={`View image ${idx + 1}`}
+              aria-label={dict.product.viewImage.replace('{index}', String(idx + 1))}
               aria-current={activeIndex === idx ? 'true' : 'false'}
             >
               <Image
                 src={img}
-                alt={`Thumbnail ${idx + 1}`}
+                alt={dict.product.thumbnailAlt.replace('{index}', String(idx + 1))}
                 fill
                 sizes="(max-width: 768px) 25vw, 12vw"
                 className={cn(
